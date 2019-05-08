@@ -1,28 +1,27 @@
+from pydrake.all import DiagramBuilder, Simulator, SignalLogger, VectorSystem
 import math
 import numpy as np
 
-from pydrake.all import (
-    DiagramBuilder,
-    Simulator,
-    SignalLogger,
-    VectorSystem
-    )
 
 # Define a system to calculate the continuous dynamics
 # of the inertial wheel pendulum.
-# 
+#
 # This class takes as input the physical description
-# of the system, in terms of the center of mass of 
+# of the system, in terms of the center of mass of
 # the first link (m1 centered at l1) and the second
 # link (m2 centered at l2, with radius r).
+
+
 class InertialWheelPendulum(VectorSystem):
-    def __init__(self, m1 = 1., l1 = 1., 
-                       m2 = 2., l2 = 2., r = 1.0,
-                       g = 10., input_max = 10.):
-        VectorSystem.__init__(self,
-            1,                           # One input (torque at reaction wheel).
-            4)                           # Four outputs (theta, phi, dtheta, dphi)
-        self._DeclareContinuousState(4)  # Four states (theta, phi, dtheta, dphi).
+    def __init__(self, m1=1.0, l1=1.0, m2=2.0, l2=2.0, r=1.0, g=10.0, input_max=10.0):
+        VectorSystem.__init__(
+            self,
+            # One input (torque at reaction wheel).
+            1,
+            4,
+        )  # Four outputs (theta, phi, dtheta, dphi)
+        # Four states (theta, phi, dtheta, dphi).
+        self._DeclareContinuousState(4)
 
         self.m1 = float(m1)
         self.l1 = float(l1)
@@ -36,28 +35,34 @@ class InertialWheelPendulum(VectorSystem):
         # Treat the first link as a point mass.
         self.I1 = self.m1 * self.l1 ** 2
         # Treat the second link as a disk.
-        self.I2 = 0.5 * self.m2 * self.r**2
+        self.I2 = 0.5 * self.m2 * self.r ** 2
 
     # This method returns (M, C, tauG, B)
     # according to the dynamics of this system.
     def GetManipulatorDynamics(self, q, qd):
         M = np.array(
-            [[self.m1*self.l1**2 + self.m2*self.l2**2 
-             + self.I1 + self.I2, self.I2], [self.I2, self.I2]])
+            [
+                [
+                    self.m1 * self.l1 ** 2 + self.m2 * self.l2 ** 2 + self.I1 + self.I2,
+                    self.I2,
+                ],
+                [self.I2, self.I2],
+            ]
+        )
         C = np.array([[0, 0], [0, 0]])
         tauG = np.array(
-            [[-(self.m1*self.l1 + self.m2*self.l2)*self.g*math.sin(q[0])],
-             [0]])
-        B = np.array([[0.],
-                      [1.]])
+            [[-(self.m1 * self.l1 + self.m2 * self.l2) * self.g * math.sin(q[0])], [0]]
+        )
+        B = np.array([[0.0], [1.0]])
         return (M, C, tauG, B)
-    
+
     # This method returns (M, C, tauG, B)
     # according to the dynamics of this system.
     def GetPE(self, q, qd):
         PE = np.array(
-            [[-(self.m1*self.l1 + self.m2*self.l2)*self.g*math.cos(q[0])]])
-        return (PE)
+            [[-(self.m1 * self.l1 + self.m2 * self.l2) * self.g * math.cos(q[0])]]
+        )
+        return PE
 
     # This helper uses the manipulator dynamics to evaluate
     # \dot{x} = f(x, u). It's just a thin wrapper around
@@ -68,8 +73,7 @@ class InertialWheelPendulum(VectorSystem):
     def evaluate_f(self, u, x, throw_when_limits_exceeded=True):
         # Bound inputs
         if throw_when_limits_exceeded and abs(u[0]) > self.input_max:
-            raise ValueError("You commanded an out-of-range input of u=%f"
-                              % (u[0]))
+            raise ValueError("You commanded an out-of-range input of u=%f" % (u[0]))
         else:
             u[0] = max(-self.input_max, min(self.input_max, u[0]))
 
@@ -85,9 +89,9 @@ class InertialWheelPendulum(VectorSystem):
 
         return np.hstack([qd, qdd])
 
-
     # This method calculates the time derivative of the state,
     # which allows the system to be simulated forward in time.
+
     def _DoCalcVectorTimeDerivatives(self, context, u, x, xdot):
         q = x[0:2]
         qd = x[2:4]
@@ -124,32 +128,44 @@ class InertialWheelPendulum(VectorSystem):
         # You might want at least one of these.
         (M, C_f, tauG_f, B_f) = self.GetManipulatorDynamics(q_f, qd_f)
 
-
-        '''
+        """
+        IMPORTANT: These are our A and B (used later for LQR)
         Autograded answer for 3.1: Fill in the rest of this function,
         computing the linearized dynamics of this system around the
         specified point.
-        '''
+        """
         A = np.zeros((4, 4))
-        A[0,2] = 1;
-        A[1,3] = 1;
-        A[2,0] = (self.m1*self.l1+self.m2*self.l2)*self.g/(self.m1*self.l1*self.l1+self.m2*self.l2*self.l2+self.I1);
-        A[3,0] = -(self.m1*self.l1+self.m2*self.l2)*self.g/(self.m1*self.l1*self.l1+self.m2*self.l2*self.l2+self.I1);
+        A[0, 2] = 1
+        A[1, 3] = 1
+        # A[2, 0] = (
+            # (self.m1 * self.l1 + self.m2 * self.l2) * self.g
+            # / (self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1))
+        # A[3, 0] = ( -(self.m1 * self.l1 + self.m2 * self.l2) * self.g
+            # / (self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1))
+        A[2, 0] = 0  
+        A[3, 0] = 0  
+
         B = np.zeros((4, 1))
-        B[2,0] = -1/(self.m1*self.l1*self.l1+self.m2*self.l2*self.l2+self.I1);
-        B[3,0] = 1/self.I2 + 1/(self.m1*self.l1*self.l1+self.m2*self.l2*self.l2+self.I1);
+        B[2, 0] = -1 / ( self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1)
+        B[3, 0] = 1 / self.I2 + \
+            1 / ( self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1)
+        print('hi')
         return (A, B)
 
+
 class PendulumController(VectorSystem):
-    ''' System to control the pendulum. Must be handed
+    """ System to control the pendulum. Must be handed
     a function with signature:
         u = f(t, x)
-    that computes control inputs for the pendulum. '''
+    that computes control inputs for the pendulum. """
 
     def __init__(self, feedback_rule):
-        VectorSystem.__init__(self,
-            4,                           # Four inputs: full state inertial wheel pendulum..
-            1)                           # One output (torque for reaction wheel).
+        VectorSystem.__init__(
+            self,
+            # Four inputs: full state inertial wheel pendulum..
+            4,
+            1,
+        )  # One output (torque for reaction wheel).
         self.feedback_rule = feedback_rule
 
     # This method calculates the output of the system from the
@@ -160,7 +176,9 @@ class PendulumController(VectorSystem):
         y[:] = self.feedback_rule(u)
 
 
-def RunSimulation(pendulum_plant, control_law, x0=np.random.random((4, 1)), duration=30):
+def RunSimulation(
+    pendulum_plant, control_law, x0=np.random.random((4, 1)), duration=30
+):
     pendulum_controller = PendulumController(control_law)
 
     # Create a simple block diagram containing the plant in feedback
@@ -168,14 +186,17 @@ def RunSimulation(pendulum_plant, control_law, x0=np.random.random((4, 1)), dura
     builder = DiagramBuilder()
     # The last pendulum plant we made is now owned by a deleted
     # system, so easiest path is for us to make a new one.
-    plant = builder.AddSystem(InertialWheelPendulum(
-        m1 = pendulum_plant.m1,
-        l1 = pendulum_plant.l1, 
-        m2 = pendulum_plant.m2, 
-        l2 = pendulum_plant.l2, 
-        r = pendulum_plant.r, 
-        g = pendulum_plant.g, 
-        input_max = pendulum_plant.input_max))
+    plant = builder.AddSystem(
+        InertialWheelPendulum(
+            m1=pendulum_plant.m1,
+            l1=pendulum_plant.l1,
+            m2=pendulum_plant.m2,
+            l2=pendulum_plant.l2,
+            r=pendulum_plant.r,
+            g=pendulum_plant.g,
+            input_max=pendulum_plant.input_max,
+        )
+    )
 
     controller = builder.AddSystem(pendulum_controller)
     builder.Connect(plant.get_output_port(0), controller.get_input_port(0))
