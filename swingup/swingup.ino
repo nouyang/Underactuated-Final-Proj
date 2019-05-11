@@ -52,27 +52,21 @@ int swingup_controller(t1, t1dot, t2dot){
 
     if (errorEnergy < maxEnergy/2 and abs(t1dot) < 0.1) {
         // low energy, get out of it
-        u = maxSpeed;
-    }
-    else if (t2dot > maxEncoder) {
-        // spinning too fast
-        u = -maxSpeed;
-    }
+        u = maxSpeed; }
+    else if (t2dot > maxEncoder) { // spinning too fast
+        u = -maxSpeed; }
 
-    else if (t2dot < maxEncoder)  {
-        // spinning too slow
-        u = maxSpeed;
-    }
+    else if (t2dot < maxEncoder)  { // spinning too slow
+        u = maxSpeed; }
 
-    else{
-        u = 2 * tauG / M[0,1] + k * t1dot * errorEnergy;
-    }
+    else {
+    // our actual energy-shaping controller
+        u = 2 * tauG / M[0,1] + k * t1dot * errorEnergy; }
 
     u = constrain(u, minMotorSpeed, maxMotorSpeed);
     return u;
 }
     
-}
    
 
 // ---- Set interrupt to read encoder
