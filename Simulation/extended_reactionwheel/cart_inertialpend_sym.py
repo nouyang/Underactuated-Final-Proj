@@ -79,6 +79,9 @@ v_pend = state_pend.jacobian(Matrix([x, t1])) * Matrix([xdot, t1dot])
 v_wheel = state_wheel.jacobian(Matrix([t1])) * Matrix([t1dot])
 
 print('v_cart', v_cart.shape)
+print('v_cart', v_cart)
+print('\nv_pend', v_pend)
+print('\nv_wheel', v_wheel)
 
 K_cart = M * v_cart.T * v_cart / 2
 K_pend = m1 * v_pend.T * v_pend / 2
@@ -89,7 +92,8 @@ K_translat = K_cart + K_pend + K_wheel
 # angular things
 K_inertial = Matrix([0.5 * I1 * t1dot**2 + \
     0.5 * I2 * t1dot**2 + \
-    0.5 * I2 * t2dot**2])
+    0.5 * (I2 + m2 * l2**2) * t2dot**2])
+    #0.5 * I2 * t2dot**2])
 
 P = Matrix([m1 * g * (1 - l1 * cos(t1)) + m2 * g * (1 - l2 * cos(t1))])
 

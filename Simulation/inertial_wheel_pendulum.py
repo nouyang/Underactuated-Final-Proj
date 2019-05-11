@@ -137,19 +137,19 @@ class InertialWheelPendulum(VectorSystem):
         A = np.zeros((4, 4))
         A[0, 2] = 1
         A[1, 3] = 1
-        # A[2, 0] = (
-            # (self.m1 * self.l1 + self.m2 * self.l2) * self.g
-            # / (self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1))
-        # A[3, 0] = ( -(self.m1 * self.l1 + self.m2 * self.l2) * self.g
-            # / (self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1))
-        A[2, 0] = 0  
-        A[3, 0] = 0  
+        A[2, 0] = (
+             (self.m1 * self.l1 + self.m2 * self.l2) * self.g
+             / (self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1))
+        A[3, 0] = ( -(self.m1 * self.l1 + self.m2 * self.l2) * self.g
+             / (self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1))
+        #A[2, 0] = 0  
+        #A[3, 0] = 0  
 
         B = np.zeros((4, 1))
         B[2, 0] = -1 / ( self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1)
         B[3, 0] = 1 / self.I2 + \
             1 / ( self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1)
-        print('hi')
+        print('h2i')
         return (A, B)
 
 
