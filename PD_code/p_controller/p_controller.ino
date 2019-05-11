@@ -24,10 +24,10 @@ void loop(){
 
     
 // read state
-    t1dot = encoder / time_elapsed;
-    theta1 = encoder1
-    t2dot = endoer2
-    theta2 = encoder2 / time_elapsed;
+//    t1dot = encoder / time_elapsed;
+//    theta1 = encoder1
+//    t2dot = endoer2
+//    theta2 = encoder2 / time_elapsed;
 
     # calc error from fixed point
     error = [desired state] - [theta1 t1dot theta2 t2dot]
@@ -45,16 +45,13 @@ void loop(){
     motorWrite(speed);
 }
 
-
+// convert our u in torque units, to u in "analogwrite" units
 int calcMotorSpeed(torque){
-# convert our u in torque units, to u in "analogwrite" units
-# torque = Iwr
+// torque = Iwr
     motorSpeed = ?? torque /  
     return motorSpeed
-## Check that torque is less than max torque
-
+// Check that torque is less than max torque
 }
-
 
 void motorLeft(speed){
     digitalWrtie 12 LOW
