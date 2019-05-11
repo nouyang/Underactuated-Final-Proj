@@ -46,23 +46,23 @@ void loop() {
 // ramp it up#
     for(duty = 0; duty <= 255; duty += 50){
       analogWrite(PWMPin, duty);
-      delay(1);
+      delay(5);
     }
 
     delay(400);
 
     for(duty = 0; duty <= 255; duty += 50){
       analogWrite(PWMPin, duty);
-      delay(1);
+      delay(5);
     }
 
     // Swap pins to make the motor reverse
     if(PWMPin == 11) {
-        PWMPin = 3;
+        PWMPin = 10;
         PWMPin2 = 11;
     } else {
         PWMPin = 11;
-        PWMPin2 = 3;
+        PWMPin2 = 10;
     }
 
     analogWrite(PWMPin, 0);
