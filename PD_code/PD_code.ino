@@ -16,7 +16,7 @@ float CVal;    // adjusted Amps value
 int EnablePin = 8;
 int duty;
 int PWMPin = 11;  // Timer2
-int PWMPin2 = 3;
+int PWMPin2 = 10;
 
 
 void setup() {
@@ -29,44 +29,67 @@ void setup() {
     PCICR |= (1 << PCIE2);
     PCMSK2 |= (1 << PCINT18) | (1 << PCINT19);
     sei();
-    
 }
+    
 
 void loop() {
     // --------Level Encoder--------
 //    delay(100);
-    char ch = Serial.read();
-    if (ch == 'z') {
-      encoder0Pos = 0;
-      Serial.print("~zeroed~ ... 0.00");
-    }
-    if (ch == 'e') {
-      
-    }
-
-    // --------Motor--------
+    /*char ch = Serial.read();*/
+    /*if (ch == 'z') {*/
+      /*encoder0Pos = 0;*/
+      /*Serial.print("~zeroed~ ... 0.00");*/
+    /*}*/
     digitalWrite(EnablePin, HIGH);
     analogWrite(PWMPin2, 0);
-    analogWrite(PWMPin, 255);
-    CRaw = analogRead(CPin);
+
+// ramp it up#
+    for(duty = 0; duty <= 255; duty += 50){
+      analogWrite(PWMPin, duty);
+      delay(1);
+    }
+
     delay(400);
-    analogWrite(PWMPin, 0);
-    delay(5);
-    // Toggle enable to reset the power chips if we have had 
-    // an overcurrent or overtemp fault
-    digitalWrite(EnablePin, LOW);
-    delay(5);
-    
+
+    for(duty = 0; duty <= 255; duty += 50){
+      analogWrite(PWMPin, duty);
+      delay(1);
+    }
+
     // Swap pins to make the motor reverse
     if(PWMPin == 11) {
-      PWMPin = 3;
-      PWMPin2 = 11;
+        PWMPin = 3;
+        PWMPin2 = 11;
     } else {
-      PWMPin = 11;
-      PWMPin2 = 3;
+        PWMPin = 11;
+        PWMPin2 = 3;
     }
-    
+
+    analogWrite(PWMPin, 0);
 }
+    // --------Motor--------
+    /*analogWrite(PWMPin2, 0);*/
+    /*analogWrite(PWMPin, 255);*/
+    /*CRaw = analogRead(CPin);*/
+    /*delay(400);*/
+    /*analogWrite(PWMPin, 0);*/
+    /*delay(5);*/
+    /*// Toggle enable to reset the power chips if we have had */
+    /*// an overcurrent or overtemp fault*/
+    /*digitalWrite(EnablePin, LOW);*/
+    /*delay(5);*/
+    
+    /*// Swap pins to make the motor reverse*/
+    /*if(PWMPin == 11) {*/
+      /*PWMPin = 3;*/
+      /*PWMPin2 = 11;*/
+    /*} else {*/
+      /*PWMPin = 11;*/
+      /*PWMPin2 = 3;*/
+    /*}*/
+    
+
+// ---- Set interrupt to read encoder
 
 ISR(PCINT2_vect) {
     unsigned char result = r.process();
@@ -83,6 +106,10 @@ ISR(PCINT2_vect) {
         Serial.println((double(encoder0Pos) / 1250) * 360);
     }
 }
+
+
+
+// ---- Set clock frequency for motor controller
 
 void setPwmFrequency(int pin, int divisor) {
   byte mode;
