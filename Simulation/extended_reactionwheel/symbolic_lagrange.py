@@ -50,15 +50,22 @@ P_1 = Matrix([m_1 * g * p_1[1]])
 P_2 = Matrix([m_2 * g * p_2[1]])
 
 # dynamics:
-
 # Lagrangian L=sum(K)-sum(P)
 L = K_c + K_1 + K_2 - P_1 - P_2
+print('l shape', L.shape)
+print('K_c shape', K_c.shape)
+print('P_1 shape', P_1.shape)
+print('K_c', K_c)
+print('K_1', K_1)
 
 # first term in the Euler-Lagrange equation
 partial_L_by_partial_q = L.jacobian(Matrix([q])).T
+print('dl dq', partial_L_by_partial_q.shape)
+print('q shape', q.shape)
 
 # inner term of the second part of the Euler-Lagrange equation
 partial_L_by_partial_qdot = L.jacobian(Matrix([qdot]))
+print('dl d qdot', partial_L_by_partial_qdot.shape)
 
 # second term (overall, time derivative) in the Euler-Lagrange equation
 # applies the chain rule

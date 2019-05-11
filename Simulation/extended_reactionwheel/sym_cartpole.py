@@ -1,5 +1,4 @@
-# sanity check -- adapt for cartpole
-# for double pendulum on cart
+# sanity check -- adapt for reaction wheel inverted pendulum
 
 # You are free to use, modify, copy, distribute the code.
 # Please give a clap on medium, star on github, or share the article if you
@@ -12,56 +11,84 @@
 # file with the name `dpc_dynamics_generated.py`
 
 import sympy
-from sympy import sin, cos, simplify
+from sympy import sin, cos, simplify, Derivative, diff
 from sympy import symbols as syms
 from sympy.matrices import Matrix
 from sympy.utilities.lambdify import lambdastr
 
 import time
 
+# https://docs.sympy.org/0.7.6/modules/physics/mechanics/examples/rollingdisc_example_lagrange.html
 # state, state derivative, and control variables
 # we only have theta for the simple pendulum
 # the force input -- there is none
-q, qdot, qddot = syms('q qdot qddot')
+#q, qdot, qddot = syms('q qdot qddot')
+t1, t2, t1dot, t2dot, t1ddot, t2ddot = syms('t1 t2 t1dot t2dot t1ddot t2ddot')
 
 # parameters
-m, l, g = syms('m l g')
+#m, l, g = syms('m l g')
+m1, l1, I1, m2, l2, I2, g = syms('m1 l1 I1 m2 l2 I2 g')
 
-p = Matrix([m, l, g])      # parameter vector
+p = Matrix([m1, l1, I1, m2, l2, I2, g])      # parameter vector
+q = Matrix([t1, t2])
 
-#q = Matrix([q])                   # generalized positions
-qdot = Matrix([qdot])       # time derivative of q
-qddot = Matrix([qddot])   # time derivative of qdot
+qdot = Matrix([t1dot, t2dot]) # time derivative of q
+qddot = Matrix([t1ddot, t2ddot]) # time derivative of qdot
 
 # To calculate time derivatives of a function f(q), we use:
 # df(q)/dt = df(q)/dq * dq/dt = df(q)/dq * qdot
 
-# kinematics:
+# Write as a matrix as fxn of the q terms
+# one for t1, one for t2
+#x = m1 * l1**2
+#x = m2 * l2**2
+
+qdot = diff(q)
+
+K_translat = Matrix([0.5 * m1 * (l1 * t1dot)**2 + \
+    0.5 * m2 * (l2 * t2dot)**2])
+# K_inertial = 0.5 * Matrix([m1 * (l1 * t1dot)**2, 
+                           # m2 * (l2 * t2dot)**2])
+
+K_inertial = Matrix([0.5 * I1 * t1dot**2 + \
+    0.5 * I2 * t1dot**2 + \
+    0.5 * I2 * t2dot**2])
+
+P = Matrix([m1 * g * (1 - l1 * cos(t1)) + m2 * g * (1 - l2 * cos(t1))])
+
+# P = Matrix([m1 * g * (1 - l1 * cos(t1)), 
+            # m2 * g * (1 - l2 * cos(t1))])
+
+# K_translat = 0.5 * Matrix([I1 * t1dot**2 + I2 * t1dot**2, 
+                           # I2 * t2dot**2])
 
 # dynamics:
-#P = m * g * l * (1 - cos(q)) 
-P = Matrix([m * g * l * (1 - cos(q)) ])
-# df(q)/dt = df(q)/dq * dq/dt = df(q)/dq * qdot
-# v_c = p_c.jacobian(Matrix([q_0])) * Matrix([qdot_0])
-K = 0.5 * m * l**2 * (qdot.T * qdot) 
+# P = m * g * l * (1 - cos(q)) 
+# P = Matrix([m * g * l * (1 - cos(q)) ])
+# K = 0.5 * m * l**2 * (qdot.T * qdot) 
 
-# v_c = p_c.jacobian(Matrix([q_0])) * Matrix([qdot_0])
- 
 # Lagrangian L=sum(K)-sum(P)
-L =  K - P
+L =  K_translat + K_inertial - P
+print(L)
+print('L', L.shape)
+print('q', q.shape)
 
 # first term in the Euler-Lagrange equation
 partial_L_by_partial_q = L.jacobian(Matrix([q])).T
+print('dL dq', partial_L_by_partial_q.shape)
 
 # inner term of the second part of the Euler-Lagrange equation
 partial_L_by_partial_qdot = L.jacobian(Matrix([qdot]))
+print(partial_L_by_partial_qdot)
+print('dL dqdot', partial_L_by_partial_qdot.shape)
 
 # second term (overall, time derivative) in the Euler-Lagrange equation
 # applies the chain rule
-d_inner_by_dt = partial_L_by_partial_qdot.jacobian(Matrix([q])) * qdot + partial_L_by_partial_qdot.jacobian(Matrix([qdot])) * qddot
+d_inner_by_dt = partial_L_by_partial_qdot.jacobian(Matrix([q])) * qdot + \
+    partial_L_by_partial_qdot.jacobian(Matrix([qdot])) * qddot
 
 # Euler-Lagrange equation
-lagrange_eq = partial_L_by_partial_q - d_inner_by_dt + Matrix([0])
+lagrange_eq = partial_L_by_partial_q - d_inner_by_dt + Matrix([0, 0])
 
 # solve the lagrange equation for qddot and simplify
 prevTime = time.time()
@@ -73,17 +100,18 @@ prevTime = time.time()
 
 print("Simplifying...")
 #qddot = simplify(r)
-qddot = r#[qddot]
+t1ddot = simplify(r[t1ddot])
+t2ddot = simplify(r[t2ddot])
 
-print('qddot = {}\n'.format(qddot));
+print('t1ddot= {}\n'.format(t1ddot));
+print('t2ddot= {}\n'.format(t2ddot));
 
 print('Elapsed: ', time.time() - prevTime)
 prevTime = time.time()
 # generate python function
-print((q, qdot, qddot, l, m, g))
-#print(s)
+print(t1, t2, t1dot, t2dot, t1ddot, t2ddot)
+print(m1, l1, I1, m2, l2, I2, g)
 
-f_gen = open("pendulum_dynamics_generated.py", 'w')
-#f_gen.write("import math\ndef dpc_dynamics_generated(q_0, q_1, q_2, qdot_0, qdot_1, qdot_2, f, r_1, r_2, m_c, m_1, m_2, g):\n\tfun="+s+"\n\treturn fun(q_0, q_1, q_2, qdot_0, qdot_1, qdot_2, f, r_1, r_2, m_c, m_1, m_2, g)")
+f_gen = open("reaction_pendulum_dynamics_generated.py", 'w')
+
 f_gen.close()
-
