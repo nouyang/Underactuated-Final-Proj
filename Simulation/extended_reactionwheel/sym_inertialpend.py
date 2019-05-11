@@ -64,7 +64,8 @@ K_translat = Matrix([0.5 * m1 * (l1 * t1dot)**2 + \
 
 K_inertial = Matrix([0.5 * I1 * t1dot**2 + \
     0.5 * I2 * t1dot**2 + \
-    0.5 * I2 * t2dot**2])
+    0.5 * (I2 + m2 * l2**2) * t2dot**2])
+#    0.5 * I2 * t2dot**2])
 
 P = Matrix([m1 * g * (1 - l1 * cos(t1)) + m2 * g * (1 - l2 * cos(t1))])
 

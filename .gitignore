@@ -1,3 +1,5 @@
 
 *.pyc
 *.swp
+
+./Simulation/.ipynb_checkpoints/*
