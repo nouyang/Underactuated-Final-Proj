@@ -1,4 +1,5 @@
 #include <Rotary.h>
+#include <MegaMotoHB.h>
 
 //https://cdn.usdigital.com/assets/datasheets/H5_datasheet.pdf?k=636931248608523021
 
@@ -12,31 +13,31 @@ int CRaw;      // raw A/D value
 float CVal;    // adjusted Amps value
 
 // --------Motor--------
-int EnablePin = 8;
+// PWMPin (timer22), PWMPin2, EnablePin
+MegaMotoHB motor(11, 10, 8);
 int duty;
-int PWMPin = 11;  // Timer2
-int PWMPin2 = 10;
 
 // --------P-Controller--------
-double theta = 0.0; // get_from_encoder()
-double thetadot = 0.0;
-double thetadot_desired = 0.0; // [x_fixed point]
-double theta_desired = 0.0; // [x_fixed point]
-double delta_theta = 0.0;
-double prev_theta = 0.0;
-bool theta_CW;
-bool motor_CW;
+double curr_t1 = 0.0; // get_from_encoder()
+double curr_t1dot = 0.0;
+
+double t1_desired = 0.0; // [x_fixed point]
+double t1dot_desired = 0.0; // [x_fixed point]
+
+double delta_t1 = 0.0;
+double prev_t1 = 0.0;
 
 unsigned long curr_micros;
 unsigned long time_elapsed;
 unsigned long prev_micros;
+
 double k = 10; // Proportional Constant
-int motor_output = 0;
-int curr_motor_speed = 0;
-bool curr_motor_sign = 0;
+
+int t2dot = 0; // store motor speed
+int motor_output = 0; // command to motor
 
 
-//---- print help
+// ---- fancy arduino printf
 int aprintf(char *str, ...) {
 	int i, j, count = 0;
 
@@ -79,15 +80,10 @@ int aprintf(char *str, ...) {
 
 void setup() {
     Serial.begin (230400);
-    pinMode(EnablePin, OUTPUT);     
-    pinMode(PWMPin, OUTPUT);
-    pinMode(PWMPin2, OUTPUT);
-    setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq
     r.begin();
     PCICR |= (1 << PCIE2);
     PCMSK2 |= (1 << PCINT18) | (1 << PCINT19);
     sei();
-    motorOn();
 }
 
 void loop(){
@@ -101,45 +97,32 @@ void loop(){
     /*delay(1000);*/
     //    Serial.println(prev_micros);
 
-    //    if read_encoder == True:
+    // -------- update theta 1 --------
+    curr_t1 = getCurrentTheta();
+    delta_t1 = prev_t1 - curr_t1;
+    prev_t1 = curr_t1;
 
-    //        encoder++;
-
-    // -------- update theta --------
-    prev_theta = theta;
-    theta = getCurrentTheta();
-    delta_theta = prev_theta - theta;
-
-    //    Serial.println(delta_theta);
-    if (delta_theta < 0) {
-        theta_CW = false;
-    }
-    else {
-        theta_CW = true;
-    }
-    //    Serial.println(theta_CW);
     // -------- determine motor input --------
-    thetadot = delta_theta / double(time_elapsed);
-    /*motor_output = k * (thetadot - thetadot_desired);*/
-    motor_output = k * (theta - theta_desired);
-    /*Serial.println(motor_output);*/
-    /*Serial.println(theta);*/
+    motor_output = - ceil(k * (curr_t1 - t1_desired));
+    // curr_t1dot = delta_t1 / double(time_elapsed);
+    // motor_output = k * (t1dot - t1dot_desired);
 
-    /*aprintf("\ndelta_theta %f, delta_time %l, thetad %f", delta_theta, time_elapsed, thetadot);*/
-    /*aprintf("\nth %f, time el %l, tdot %f, err %f, v_m %d", theta, time_elapsed, thetadot, theta - theta_desired, motor_output);*/
-    aprintf("\nth %f, err theta %f, curr_m, motor_out %d", theta, time_elapsed, thetadot, theta - theta_desired, motor_output);
+
+    aprintf("\n motorout %d, error t1 %f", motor_output, (curr_t1 - t1_desired));
+    /*aprintf("\nth %f, time el %l, tdot %f, err %f, v_m %d", theta, time_elapsed, t1dot, t1 - t1_desired, motor_output);*/
+    /*aprintf("\nth %f, err t1 %f, curr_m, motor_out %d", theta, time_elapsed, t1dot, t1 - t1_desired, motor_output);*/
+    
 
     // -------- write appropriate motor input --------
-    if (motor_output < 0) {
-        /*motorCCW(motor_output);*/
-        //      Serial.println("calling motorCCW");
-        delay(10);
+    if (motor_output < 0){
+        motor.Rev( abs(motor_output) );
     }
-    else if (motor_output > 0) {
-        /*motorCW(motor_output);*/
-        //      Serial.println("calling motorCW");
-        delay(10);
+    else {
+        motor.Fwd(motor_output);
     }
+}
+
+
 
     // just for testing (delete later)
     //    if (theta_CW == true) {
@@ -182,7 +165,6 @@ void loop(){
     //
     //    int speed = calcMotorSpeed(u);
     //    motorWrite(speed);
-}
 
 
 
@@ -199,41 +181,6 @@ void loop(){
 // -------- Angle Stuff --------
 double getCurrentTheta() {
     return (double(encoder0Pos) / 1250) * 360;
-}
-
-
-// -------- Motor Functions --------
-void motorOn(){
-    digitalWrite(EnablePin, HIGH);
-    analogWrite(PWMPin2, 0);
-}
-
-void motorWrite(int input_speed) {
-    if input_speed < 0 { //  
-    }
-}
-// arg requirement: speed <= 255
-void motorCW(int input_speed) { // 
-    PWMPin = 10;
-    PWMPin2 = 11;
-    motorWrite(input_speed);
-    motor_CW = true;
-}
-
-// arg requirement: speed <= 255
-void motorCCW(int input_speed) {
-    PWMPin = 11;
-    PWMPin2 = 10;
-    motorWrite(input_speed);
-    motor_CW = false;
-}
-
-void motorWrite(int input_speed) {
-    for(duty = 0; duty <= input_speed; duty += 50){
-        analogWrite(PWMPin, duty);
-        delay(5);
-    }
-    //  analogWrite(PWMPin, input_speed);
 }
 
 
@@ -283,34 +230,3 @@ ISR(PCINT2_vect) {
 
 
 // ---- Set clock frequency for motor controller ----
-
-void setPwmFrequency(int pin, int divisor) {
-    byte mode;
-    if(pin == 5 || pin == 6 || pin == 9 || pin == 10) { // Timer0 or Timer1
-        switch(divisor) {
-            case 1: mode = 0x01; break;
-            case 8: mode = 0x02; break;
-            case 64: mode = 0x03; break;
-            case 256: mode = 0x04; break;
-            case 1024: mode = 0x05; break;
-            default: return;
-        }
-        if(pin == 5 || pin == 6) { 
-            TCCR0B = TCCR0B & 0b11111000 | mode; // Timer0
-        } else {
-            TCCR1B = TCCR1B & 0b11111000 | mode; // Timer1
-        }
-    } else if(pin == 3 || pin == 11) {
-        switch(divisor) {
-            case 1: mode = 0x01; break;
-            case 8: mode = 0x02; break;
-            case 32: mode = 0x03; break;
-            case 64: mode = 0x04; break;
-            case 128: mode = 0x05; break;
-            case 256: mode = 0x06; break;
-            case 1024: mode = 0x7; break;
-            default: return;
-        }
-        TCCR2B = TCCR2B & 0b11111000 | mode; // Timer2
-    }
-}
