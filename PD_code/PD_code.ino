@@ -21,10 +21,10 @@ int PWMPin2 = 10;
 
 void setup() {
     Serial.begin (9600);
-    pinMode(EnablePin, OUTPUT);     
-    pinMode(PWMPin, OUTPUT);
-    pinMode(PWMPin2, OUTPUT);
-    setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq
+    /*pinMode(EnablePin, OUTPUT);     */
+    /*pinMode(PWMPin, OUTPUT);*/
+    /*pinMode(PWMPin2, OUTPUT);*/
+    /*setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq*/
     r.begin();
     PCICR |= (1 << PCIE2);
     PCMSK2 |= (1 << PCINT18) | (1 << PCINT19);
@@ -45,16 +45,17 @@ void loop() {
     digitalWrite(EnablePin, HIGH);
     analogWrite(PWMPin2, 0);
 
+    Serial.println(getCurrentTheta());
 // ramp it up
     for(duty = 0; duty <= 255; duty += 50){
-      analogWrite(PWMPin, duty);
+      /*analogWrite(PWMPin, duty);*/
       delay(5);
     }
 
     delay(400);
 
     for(duty = 0; duty <= 255; duty += 50){
-      analogWrite(PWMPin, duty);
+      /*analogWrite(PWMPin, duty);*/
       delay(5);
     }
 
@@ -68,6 +69,10 @@ void loop() {
     }
 
     analogWrite(PWMPin, 0);
+}
+
+double getCurrentTheta() {
+    return (double(encoder0Pos) / 1250) * 360;
 }
     // --------Motor--------
     /*analogWrite(PWMPin2, 0);*/
@@ -101,11 +106,11 @@ ISR(PCINT2_vect) {
 
     else if (result == DIR_CW) {
         encoder0Pos--;
-        Serial.println((double(encoder0Pos) / 1250) * 360);
+        //Serial.println((double(encoder0Pos) / 1250) * 360);
     }
     else if (result == DIR_CCW) {
         encoder0Pos++;
-        Serial.println((double(encoder0Pos) / 1250) * 360);
+        //Serial.println((double(encoder0Pos) / 1250) * 360);
     }
 }
 
