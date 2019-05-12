@@ -1,11 +1,17 @@
+// Sanity check that encoder works
+// 11 May 2019
+
 #include <Rotary.h>
 
 //https://cdn.usdigital.com/assets/datasheets/H5_datasheet.pdf?k=636931248608523021
 
 // --------Lever Encoder--------
 int val;
-int encoder0Pos = 0;
-Rotary r = Rotary(2, 3);
+volatile int encoderMotorPos = 0;
+volatile int encoderStickPos = 0;
+//Rotary r = Rotary(2, 3);
+Rotary rMotor = Rotary(2, 3);
+Rotary rStick = Rotary(4, 5);
 int n = LOW;
 const byte CPin = 0;  // analog input channel
 int CRaw;      // raw A/D value
@@ -22,8 +28,6 @@ double theta = 0.0; // get_from_encoder()
 double prev_theta = 0.0; // get_from_encoder()
 double thetadot = 0.0; // get_from_encoder()
 double delta_theta = 0.0; // get_from_encoder()
-
-
 
 unsigned long curr_time;
 unsigned long time_elapsed;
@@ -71,10 +75,15 @@ int aprintf(char *str, ...) {
 
 
 void setup() {
-    Serial.begin (9600);
-    r.begin();
+    Serial.begin (230400);
+    delay(50);
+    Serial.println("hi");
+    rMotor.begin();
+    rStick.begin();
     PCICR |= (1 << PCIE2);
-    PCMSK2 |= (1 << PCINT18) | (1 << PCINT19);
+    PCMSK2 |= (1 << PCINT18) | (1 << PCINT19); //D 2 and 3
+    PCICR |= (1 << PCIE0);
+    PCMSK2 |= (1 << PCINT20) | (1 << PCINT21); // D4 and D5
     sei();
 }
 
@@ -119,7 +128,7 @@ void loop(){
 
 // -------- Angle Stuff --------
 double getCurrentTheta() {
-    return (double(encoder0Pos) / 1250) * 360;
+    return (double(encoderMotorPos) / 1250) * 360;
 }
 
 
@@ -127,17 +136,33 @@ double getCurrentTheta() {
 // ---- Set interrupt to read encoder ----
 
 ISR(PCINT2_vect) {
-    unsigned char result = r.process();
+    unsigned char result = rMotor.process();
     if (result == DIR_NONE) {
         // do nothing
     }
 
     else if (result == DIR_CW) {
-        encoder0Pos--;
+        encoderMotorPos--;
         //        Serial.println(getCurrentTheta());
     }
     else if (result == DIR_CCW) {
-        encoder0Pos++;
+        encoderMotorPos++;
+        //        Serial.println(getCurrentTheta());
+    }
+}
+
+ISR(PCINT0_vect) {
+    unsigned char result = rStick.process();
+    if (result == DIR_NONE) {
+        // do nothing
+    }
+
+    else if (result == DIR_CW) {
+        encoderStickPos--;
+        //        Serial.println(getCurrentTheta());
+    }
+    else if (result == DIR_CCW) {
+        encoderStickPos++;
         //        Serial.println(getCurrentTheta());
     }
 }
