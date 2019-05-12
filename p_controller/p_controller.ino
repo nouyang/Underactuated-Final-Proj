@@ -1,5 +1,6 @@
 #include <Rotary.h>
 #include <MegaMotoHB.h>
+#include <math.h>
 
 //https://cdn.usdigital.com/assets/datasheets/H5_datasheet.pdf?k=636931248608523021
 
@@ -108,17 +109,18 @@ void loop(){
     // motor_output = k * (t1dot - t1dot_desired);
 
 
-    aprintf("\n motorout %d, error t1 %f", motor_output, (curr_t1 - t1_desired));
+    /*aprintf("\n motorout %d, error t1 %f", motor_output, (curr_t1 - t1_desired));*/
+    aprintf("\n t1 %f, error t1 %f", curr_t1, (curr_t1 - t1_desired));
     /*aprintf("\nth %f, time el %l, tdot %f, err %f, v_m %d", theta, time_elapsed, t1dot, t1 - t1_desired, motor_output);*/
     /*aprintf("\nth %f, err t1 %f, curr_m, motor_out %d", theta, time_elapsed, t1dot, t1 - t1_desired, motor_output);*/
     
 
     // -------- write appropriate motor input --------
     if (motor_output < 0){
-        motor.Rev( abs(motor_output) );
+        /*motor.Rev( abs(motor_output) );*/
     }
     else {
-        motor.Fwd(motor_output);
+        /*motor.Fwd(motor_output);*/
     }
 }
 
@@ -180,7 +182,12 @@ void loop(){
 
 // -------- Angle Stuff --------
 double getCurrentTheta() {
-    return (double(encoder0Pos) / 1250) * 360;
+    double val = (double(encoder0Pos) / 1250) * 360;
+    val = fmod(val, 360);
+    if (val > 180) {
+        val = val - 360;
+    }
+    return val;
 }
 
 
