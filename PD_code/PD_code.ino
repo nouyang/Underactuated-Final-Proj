@@ -33,17 +33,19 @@ void setup() {
     
 
 void loop() {
-    // --------Level Encoder--------
+//    --------Level Encoder--------
 //    delay(100);
-    /*char ch = Serial.read();*/
-    /*if (ch == 'z') {*/
-      /*encoder0Pos = 0;*/
-      /*Serial.print("~zeroed~ ... 0.00");*/
-    /*}*/
+    char ch = Serial.read();
+    if (ch == 'z') {
+      encoder0Pos = 0;
+      Serial.print("~zeroed~ ... 0.00");
+    }
+
+//    --------Motor--------
     digitalWrite(EnablePin, HIGH);
     analogWrite(PWMPin2, 0);
 
-// ramp it up#
+// ramp it up
     for(duty = 0; duty <= 255; duty += 50){
       analogWrite(PWMPin, duty);
       delay(5);
