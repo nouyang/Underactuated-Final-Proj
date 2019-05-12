@@ -142,8 +142,8 @@ class InertialWheelPendulum(VectorSystem):
              / (self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1))
         A[3, 0] = ( -(self.m1 * self.l1 + self.m2 * self.l2) * self.g
              / (self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1))
-        #A[2, 0] = 0  
-        #A[3, 0] = 0  
+        #A[2, 0] = 0   # downard fixed point
+        #A[3, 0] = 0   # downard fixed point
 
         B = np.zeros((4, 1))
         B[2, 0] = -1 / ( self.m1 * self.l1 * self.l1 + self.m2 * self.l2 * self.l2 + self.I1)

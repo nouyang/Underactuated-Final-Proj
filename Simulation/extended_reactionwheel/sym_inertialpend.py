@@ -56,6 +56,7 @@ qddot = Matrix([t1ddot, t2ddot]) # time derivative of qdot
 # K_translat = 0.5 * m1 * v_pend.T * v_pend + \
     # 0.5 * m1 * v_pend.T * v_pend 
 
+l2 = 2 * l1
 
 K_translat = Matrix([0.5 * m1 * (l1 * t1dot)**2 + \
     0.5 * m2 * (l2 * t2dot)**2])
@@ -63,11 +64,14 @@ K_translat = Matrix([0.5 * m1 * (l1 * t1dot)**2 + \
                            # m2 * (l2 * t2dot)**2])
 
 K_inertial = Matrix([0.5 * I1 * t1dot**2 + \
-    0.5 * I2 * t1dot**2 + \
-    0.5 * (I2 + m2 * l2**2) * t2dot**2])
+                     0.5 * I2 * (t1dot + t2dot)**2])
+# K_inertial = Matrix([0.5 * I1 * t1dot**2 + \
+    # 0.5 * I2 * t1dot**2 + \
+    # 0.5 * (I2 + m2 * l2**2) * t2dot**2])
 #    0.5 * I2 * t2dot**2])
 
-P = Matrix([m1 * g * (1 - l1 * cos(t1)) + m2 * g * (1 - l2 * cos(t1))])
+#P = Matrix([m1 * g * (1 - l1 * cos(t1)) + m2 * g * (1 - l2 * cos(t1))])
+P = Matrix([-1 * m1 * g * (l1 * cos(t1)) + -1 * m2 * g * (l2 * cos(t1))])
 
 # P = Matrix([m1 * g * (1 - l1 * cos(t1)), 
             # m2 * g * (1 - l2 * cos(t1))])
