@@ -83,7 +83,6 @@ void setup() {
     Serial.begin (230400);
     r.begin();
     PCICR |= (1 << PCIE2);
-    PCICR |= (1 << PCIE2);
     PCMSK2 |= (1 << PCINT18) | (1 << PCINT19);
     sei();
     motor.Enable();
@@ -119,10 +118,10 @@ void loop(){
 
     // -------- write appropriate motor input --------
     if (motor_output < 0){
-        motor.Rev( abs(motor_output) );
+        /*motor.Rev( abs(motor_output) );*/
     }
     else {
-        motor.Fwd(motor_output);
+        /*motor.Fwd(motor_output);*/
         motor.Stop();
     }
 }

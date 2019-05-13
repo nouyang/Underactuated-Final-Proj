@@ -1,3 +1,5 @@
+// NOT SURE IF IN WORKING STATE -- replaced by p_controller.ino
+// 11 May 2019
 #include <Rotary.h>
 
 //https://cdn.usdigital.com/assets/datasheets/H5_datasheet.pdf?k=636931248608523021
@@ -21,10 +23,10 @@ int PWMPin2 = 10;
 
 void setup() {
     Serial.begin (9600);
-    /*pinMode(EnablePin, OUTPUT);     */
-    /*pinMode(PWMPin, OUTPUT);*/
-    /*pinMode(PWMPin2, OUTPUT);*/
-    /*setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq*/
+    pinMode(EnablePin, OUTPUT);     
+    pinMode(PWMPin, OUTPUT);
+    pinMode(PWMPin2, OUTPUT);
+    setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq
     r.begin();
     PCICR |= (1 << PCIE2);
     PCMSK2 |= (1 << PCINT18) | (1 << PCINT19);

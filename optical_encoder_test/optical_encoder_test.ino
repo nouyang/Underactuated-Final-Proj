@@ -1,7 +1,7 @@
 //#include <KeyboardController.h>
 int val;
-int encoder0PinA = 8;
-int encoder0PinB = 9;
+int encoder0PinA = 6;
+int encoder0PinB = 5;
 int encoder0Pos = 0;
 int encoder0PinALast = LOW;
 int n = LOW;
@@ -15,7 +15,7 @@ int n = LOW;
 void setup() {
   pinMode (encoder0PinA, INPUT);
   pinMode (encoder0PinB, INPUT);
-  Serial.begin (9600);
+  Serial.begin (230400);
 }
 
 void loop() {
@@ -23,7 +23,6 @@ void loop() {
   if ((encoder0PinALast == LOW) && (n == HIGH)) {
     if (digitalRead(encoder0PinB) == LOW) {
       encoder0Pos--;
-      t
     } else {
       encoder0Pos++;
     }
@@ -33,6 +32,8 @@ void loop() {
     Serial.print ("/");
   }
   encoder0PinALast = n;
+  Serial.println("hi");
+  Serial.println(n);
 }
 //
 //void keyPressed() {
