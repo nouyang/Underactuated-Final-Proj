@@ -30,7 +30,7 @@ int motor_output = 0; // command to motor
 double thetadot_deadband = 0.2;
 double theta_deadband = 5;
 
-int sample_time = 0; // 15 msec
+int sample_time = 5; // 15 msec
 
 double theta1 = 0.0; // get_from_encoder()
 double theta2 = 0.0; // get_from_encoder()
@@ -61,11 +61,11 @@ unsigned long prev_time = 0;
 double state[4];
 
 double k = 4; // theta constant 
-double kdot = -100; // thetadot 
+double kdot = -80; // thetadot 
 
 void setup() {
-    /*Serial.begin(230400);*/
-    Serial.begin(9600); // for use with plotter tool 
+    Serial.begin(230400);
+    /*Serial.begin(9600); // for use with plotter tool */
 
     rMotor.begin();
     rStick.begin();
@@ -77,7 +77,7 @@ void setup() {
 
     /*motorOn();*/
     motor.Enable();
-    motor.SetStepDelay(1);
+    motor.SetStepDelay(0);
     /*setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq*/
 }
 
@@ -123,25 +123,25 @@ void loop(){
     /*Serial.print(delta_motor);*/
 
     /*// -------- write appropriate motor input --------*/
-    /*motor_output  = abs(constrain(motor_output, -200, 200));*/
-    motor_output = 230;
+    motor_output  = abs(constrain(motor_output, -150, 150));
+    motor_output = 200;
     if (theta1 > 8) {
         if (theta1dot > 0.01) {
-            motorWrite(motor_output);
+            motorWrite(-motor_output);
             /*motorCCW(abs(motor_output));*/
         }
         else if (theta1dot < 0.01) {
-            motorWrite(-motor_output);
+            motorWrite(motor_output);
             /*motorCW(abs(motor_output));*/
         }
     }
     else if (theta1 < -8) {
         if (theta1dot > 0.01) {
-            motorWrite(motor_output);
+            motorWrite(-motor_output);
             /*motorCCW(abs(motor_output));*/
         }
         else if (theta1dot < -0.01) {
-            motorWrite(-motor_output);
+            motorWrite(motor_output);
             /*motorCW(abs(motor_output));*/
         }
         else {
@@ -151,7 +151,7 @@ void loop(){
     else {
         // theta angle small; do nothing or use
         //motor.Stop();
-        motorWrite(1);
+        /*motorWrite(1);*/
     }
 
     // SANITY CHECK
