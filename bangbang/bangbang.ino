@@ -30,7 +30,7 @@ int motor_output = 0; // command to motor
 double thetadot_deadband = 0.2;
 double theta_deadband = 5;
 
-int sample_time = 1; // 15 msec
+int sample_time = 0; // 15 msec
 
 double theta1 = 0.0; // get_from_encoder()
 double theta2 = 0.0; // get_from_encoder()
@@ -60,8 +60,8 @@ unsigned long prev_time = 0;
 
 double state[4];
 
-double k = 8; // theta constant 
-double kdot = -500; // thetadot 
+double k = 4; // theta constant 
+double kdot = -100; // thetadot 
 
 void setup() {
     /*Serial.begin(230400);*/
@@ -77,12 +77,13 @@ void setup() {
 
     /*motorOn();*/
     motor.Enable();
-    motor.SetStepDelay(0);
+    motor.SetStepDelay(1);
+    /*setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq*/
 }
 
 void loop(){
     // -------- update time --------
-    unsigned long now = millis();
+    now = millis();
     time_elapsed = (now - prev_time);
     if (time_elapsed >= sample_time)
     {
@@ -92,8 +93,8 @@ void loop(){
     
     theta2 = getCurrentTheta2();
     theta1 = getCurrentTheta1();
-    delta_theta2 = prev_theta2 - theta2;
-    delta_theta1 = prev_theta1 - theta1;
+    delta_theta2 = theta2 - prev_theta2;
+    delta_theta1 = theta1 - prev_theta1;
     theta1dot = delta_theta1 / time_elapsed;
     theta2dot = delta_theta2 / time_elapsed;
     prev_theta2 = theta2;
@@ -117,33 +118,30 @@ void loop(){
     /*aprintf("\n %d %f %d %f %f ", delta_motor, theta1, motor_output, err_theta, err_thetadot);*/
     /*aprintf("\n %f %f %f %f ", theta1, err_theta, theta1dot, err_thetadot);*/
     /*aprintf("\n %f %f ", theta1dot, err_thetadot);*/
-    aprintf("\n t1 %f errtheta %f, motor out %d, t1dot %f", theta1, err_theta, motor_output, theta1dot);
+    aprintf("\n t1 %f errtheta %f, errdot %f, motor out %d, t1dot %f", theta1, err_theta, err_thetadot, motor_output, theta1dot);
     /*Serial.println(theta1);*/
     /*Serial.print(delta_motor);*/
 
-    // -------- write appropriate motor input --------
-    motor_output  = abs(constrain(motor_output, -230, 230));
+    /*// -------- write appropriate motor input --------*/
+    /*motor_output  = abs(constrain(motor_output, -200, 200));*/
+    motor_output = 230;
     if (theta1 > 8) {
         if (theta1dot > 0.01) {
-            /*motorWrite(-200);*/
-            motorWrite(-motor_output);
+            motorWrite(motor_output);
             /*motorCCW(abs(motor_output));*/
         }
         else if (theta1dot < 0.01) {
-            motorWrite(motor_output);
-            /*motorWrite(200);*/
+            motorWrite(-motor_output);
             /*motorCW(abs(motor_output));*/
         }
     }
     else if (theta1 < -8) {
         if (theta1dot > 0.01) {
-            motorWrite(-motor_output);
-            /*motorWrite(-200);*/
+            motorWrite(motor_output);
             /*motorCCW(abs(motor_output));*/
         }
         else if (theta1dot < -0.01) {
-            motorWrite(motor_output);
-            /*motorWrite(200);*/
+            motorWrite(-motor_output);
             /*motorCW(abs(motor_output));*/
         }
         else {
@@ -156,6 +154,16 @@ void loop(){
         motorWrite(1);
     }
 
+    // SANITY CHECK
+    /*
+    motor.Rev(200);
+    delay(500);
+    motor.Fwd(200);
+    delay(500);
+    motor.Stop();
+    delay(500);
+    */
+
     prev_time = now;
     }
 }
@@ -166,12 +174,11 @@ void loop(){
 
 
 // Implement bang bang control on theta2 dot dot 
+// -- This is PID loop to control actual motor speed to desired speed 
 void motorWrite(int someValue) {
-Serial.print("\n");
-    Serial.println(someValue);
 
     if (someValue > 0) {
-        if (theta2dot > 0 ) motor.Rev(someValue);
+        if (theta2dot > 0 ) motor.Rev(someValue); //motor.Stop();
         else motor.Rev(someValue);
     }
     else if (someValue < 0) { // < 0
@@ -278,3 +285,34 @@ int aprintf(char *str, ...) {
   return count;
 }
 
+
+void setPwmFrequency(int pin, int divisor) {
+  byte mode = 0;
+  if(pin == 5 || pin == 6 || pin == 9 || pin == 10) {
+    switch(divisor) {
+      case 1: mode = 0x01; break;
+      case 8: mode = 0x02; break;
+      case 64: mode = 0x03; break;
+      case 256: mode = 0x04; break;
+      case 1024: mode = 0x05; break;
+      default: return;
+    }
+    if(pin == 5 || pin == 6) {
+      TCCR0B = TCCR0B & 0b11111000 | mode;
+    } else {
+      TCCR1B = TCCR1B & 0b11111000 | mode;
+    }
+  } else if(pin == 3 || pin == 11) {
+    switch(divisor) {
+      case 1: mode = 0x01; break;
+      case 8: mode = 0x02; break;
+      case 32: mode = 0x03; break;
+      case 64: mode = 0x04; break;
+      case 128: mode = 0x05; break;
+      case 256: mode = 0x06; break;
+      case 1024: mode = 0x07; break;
+      default: return;
+    }
+    TCCR2B = TCCR2B & 0b11111000 | mode;
+  }
+}
