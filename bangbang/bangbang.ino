@@ -30,7 +30,7 @@ int motor_output = 0; // command to motor
 double thetadot_deadband = 0.2;
 double theta_deadband = 5;
 
-int sample_time = 5; // 15 msec
+int sample_time = 1; // 15 msec
 
 double theta1 = 0.0; // get_from_encoder()
 double theta2 = 0.0; // get_from_encoder()
@@ -60,8 +60,8 @@ unsigned long prev_time = 0;
 
 double state[4];
 
-double k = 4; // theta constant 
-double kdot = -1000; // thetadot 
+double k = 8; // theta constant 
+double kdot = -500; // thetadot 
 
 void setup() {
     /*Serial.begin(230400);*/
@@ -122,24 +122,28 @@ void loop(){
     /*Serial.print(delta_motor);*/
 
     // -------- write appropriate motor input --------
-    motor_output  = constrain(motor_output, -255, 255);
+    motor_output  = abs(constrain(motor_output, -230, 230));
     if (theta1 > 8) {
         if (theta1dot > 0.01) {
-            motorWrite(-200);
+            /*motorWrite(-200);*/
+            motorWrite(-motor_output);
             /*motorCCW(abs(motor_output));*/
         }
         else if (theta1dot < 0.01) {
-            motorWrite(200);
+            motorWrite(motor_output);
+            /*motorWrite(200);*/
             /*motorCW(abs(motor_output));*/
         }
     }
     else if (theta1 < -8) {
         if (theta1dot > 0.01) {
-            motorWrite(-200);
+            motorWrite(-motor_output);
+            /*motorWrite(-200);*/
             /*motorCCW(abs(motor_output));*/
         }
         else if (theta1dot < -0.01) {
-            motorWrite(200);
+            motorWrite(motor_output);
+            /*motorWrite(200);*/
             /*motorCW(abs(motor_output));*/
         }
         else {
@@ -163,7 +167,9 @@ void loop(){
 
 // Implement bang bang control on theta2 dot dot 
 void motorWrite(int someValue) {
-    /*someValue = constrain(someValue, -255, 255);*/
+Serial.print("\n");
+    Serial.println(someValue);
+
     if (someValue > 0) {
         if (theta2dot > 0 ) motor.Rev(someValue);
         else motor.Rev(someValue);
