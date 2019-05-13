@@ -107,7 +107,8 @@ void loop(){
     /*motor_speed = k * (thetadot - thetadot_desired);*/
     /*Serial.println(motor_speed);*/
     
-    motor_output = - ceil(k * (theta1 - theta1_desired));
+    /*motor_output = - ceil(k * (theta1 - theta1_desired));*/
+    motor_output = - 30;
 //    Serial.print("Motor output: ");
 //    Serial.print(motor_output);
     aprintf("\ntheta1 %f, t2 %f, t1dot %f, t2dot %f, out %d, deltath %f, cw ", 
@@ -184,12 +185,22 @@ void loop(){
 /*}*/
     
 // -------- Angle Conversion --------
-double getCurrentTheta1() {
-    return (double(encoder1Pos) / 1250) * 360;
+double getCurrentTheta1() { // calibration for stick encoder = 1250
+    double val = (double(encoder1Pos) / 1250) * 360;
+    val = fmod(val, 360);
+    if (val > 180) {
+        val = val - 360;
+    }
+    return val;
 }
 
-double getCurrentTheta2() { 
-    return (double(encoder2Pos) / 1250) * 360;
+double getCurrentTheta2() {  // 500 ticks / rev, for motor encoder
+    double val = (double(encoder2Pos) / 500 ) * 360;
+    val = fmod(val, 360);
+    if (val > 180) {
+        val = val - 360;
+    }
+    return val;
 }
 
 
