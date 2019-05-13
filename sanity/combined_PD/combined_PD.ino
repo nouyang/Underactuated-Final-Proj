@@ -52,7 +52,8 @@ double k = 2; // P constant
 
 
 void setup() {
-    Serial.begin(230400);
+    /*Serial.begin(230400);*/
+    Serial.begin(9600); // for use with plotter tool 
 
     rMotor.begin();
     rStick.begin();
@@ -111,10 +112,14 @@ void loop(){
     motor_output = - 30;
 //    Serial.print("Motor output: ");
 //    Serial.print(motor_output);
-    aprintf("\ntheta1 %f, t2 %f, t1dot %f, t2dot %f, out %d, deltath %f, cw ", 
-            theta1, theta2, theta1dot, theta2dot, motor_output, delta_theta1);
-    Serial.print(theta_CW);
-    Serial.print("   ");
+    /*aprintf("\ntheta1 %f, t2 %f, t1dot %f, t2dot %f, out %d, deltath %f, cw ", */
+            /*theta1, theta2, theta1dot, theta2dot, motor_output, delta_theta1);*/
+    /*Serial.println(motor_output*10);*/
+    Serial.print(theta2);
+    Serial.print(" ");
+    Serial.print(motor_output);
+    Serial.print(" ");
+    Serial.println(theta1);
 //    Serial.println();/*}*/
     
 //    delay(100);
@@ -126,28 +131,28 @@ void loop(){
     if (theta1 > 0) { //to the left 
         if (theta_CW == true) {
             motor.Fwd(motor_output);
-            Serial.print("running CCW");
-            Serial.print(abs(motor_output));
+            /*Serial.print("running CCW");*/
+            /*Serial.print(abs(motor_output));*/
         }
         else {
             motor.Rev(motor_output);
             /*motorCW(abs(motor_output));*/
-            Serial.print("running CW");
-            Serial.print(abs(motor_output));
+            /*Serial.print("running CW");*/
+            /*Serial.print(abs(motor_output));*/
         }
     }
     else if (theta1 < 0) {
         if (theta_CW == true) {
             motor.Rev(motor_output);
             /*motorCCW(abs(motor_output));*/
-            Serial.print("running CCW");
-            Serial.print(abs(motor_output));
+            /*Serial.print("running CCW");*/
+            /*Serial.print(abs(motor_output));*/
         }
         else {
             motor.Fwd(motor_output);
             /*motorCW(abs(motor_output));*/
-            Serial.print("running CW");
-            Serial.print(abs(motor_output));
+            /*Serial.print("running CW");*/
+            /*Serial.print(abs(motor_output));*/
         }
     }
 
