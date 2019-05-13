@@ -127,21 +127,21 @@ void loop(){
     motor_output = 200;
     if (theta1 > 8) {
         if (theta1dot > 0.01) {
-            motorWrite(-motor_output);
+            motorWrite(motor_output);
             /*motorCCW(abs(motor_output));*/
         }
         else if (theta1dot < 0.01) {
-            motorWrite(motor_output);
+            motorWrite(-motor_output);
             /*motorCW(abs(motor_output));*/
         }
     }
     else if (theta1 < -8) {
         if (theta1dot > 0.01) {
-            motorWrite(-motor_output);
+            motorWrite(motor_output);
             /*motorCCW(abs(motor_output));*/
         }
         else if (theta1dot < -0.01) {
-            motorWrite(motor_output);
+            motorWrite(-motor_output);
             /*motorCW(abs(motor_output));*/
         }
         else {
@@ -151,7 +151,7 @@ void loop(){
     else {
         // theta angle small; do nothing or use
         //motor.Stop();
-        /*motorWrite(1);*/
+        motorWrite(1);
     }
 
     // SANITY CHECK
