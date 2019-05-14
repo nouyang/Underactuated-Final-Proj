@@ -13,8 +13,8 @@
 int val;
 volatile int encoder1Pos = 0;
 volatile int encoder2Pos = 0;
-Rotary rMotor = Rotary(2, 3); // motor (theta2)
-Rotary rStick = Rotary(A5, A4);  // stick (theta1)
+Rotary rStick = Rotary(2, 3); // motor (theta2)
+Rotary rMotor = Rotary(A5, A4);  // stick (theta1)
 int n = LOW;
 /*const byte CPin = 0;  // analog input channel*/
 /*int CRaw;      // raw A/D value*/
@@ -33,7 +33,7 @@ int motor_state = 0;
 double thetadot_deadband = 0.2;
 double theta_deadband = 5;
 
-int sample_time = 2; // 15 msec
+int sample_time = 1; // 15 msec
 
 double theta1 = 0.0; // get_from_encoder()
 double theta2 = 0.0; // get_from_encoder()
@@ -91,6 +91,7 @@ void loop(){
     time_elapsed = (now - prev_time);
     if (time_elapsed >= sample_time)
     {
+        prev_time = now;
 
         // -------- update theta --------
         // issue: prev_theta is the same as theta
@@ -132,76 +133,73 @@ void loop(){
         motor_output = 70;
 
         int someFlag = -1;
-        k = 50;
-        kdot = 40;
+        k = 10;
+        kdot = 10;
         if (abs(theta1) < 30){
-        if ((theta1 > 2+3)) {
 
-            if (theta1dot > 0.01) { // going away... slow it down -- FIGHT!
-                /*motorWrite(someFlag * motor_output);*/
-                motor_output = 20 + (k * abs((theta1)) + kdot * abs(theta1dot));
-                motor_output  = abs(constrain(motor_output, -200, 200));
-                motor.Fwd(motor_output); // fight gravity harder
-                motor_state = motor_output;
-                Serial.print("\nFwd");
-                Serial.print(motor_output);
+            if ((theta1 > 2+1)) {
+                if (theta1dot > 0.01) { // going away... slow it down -- FIGHT!
+                    /*motorWrite(someFlag * motor_output);*/
+                    motor_output = 20 + (k * abs((theta1)) + kdot * abs(theta1dot));
+                    motor_output  = abs(constrain(motor_output, -200, 200));
+                    motorWrite(+60); // fight gravity harder
+                }
+
+                // if (theta1dot < 0.1) { // going towrad .. 
+                // /*motorWrite(-someFlag * motor_output);*/
+                // motor_output = 60;
+                // motor_output  = abs(constrain(motor_output, -200, 200));
+                // motor.Rev(motor_output);
+                // Serial.print("\nRev");
+                // Serial.print(motor_output);
+                // }
+
+                // else {
+                // if (motor_state < 0){
+                // // motor.Rev(motor_state -= 20);
+                // }
+                // else{
+                // motor.Fwd(motor_state -= 20);
+                // }
+                // }
             }
 
-            // if (theta1dot < 0.1) { // going towrad .. 
-            // /*motorWrite(-someFlag * motor_output);*/
-            // motor_output = 60;
-            // motor_output  = abs(constrain(motor_output, -200, 200));
-            // motor.Rev(motor_output);
-            // Serial.print("\nRev");
-            // Serial.print(motor_output);
-            // }
-            else {
-                if (motor_state < 0){
-                    // motor.Rev(motor_state -= 20);
+            else if ((theta1 < 2-1)) {
+                // if (theta1dot > 0.1) { // going toward
+                // motor_output  = abs(constrain(motor_output, -200, 200));
+                // motor.Rev(motor_output);
+                // /*motorCCW(abs(motor_output));*/
+                // Serial.print("\nRev");
+                // Serial.print(motor_output);
+
+                // }
+
+                if (theta1dot < -0.01) { // going away -- fight!!
+                    motor_output = 20 + (k * abs(theta1) + kdot * abs(theta1dot));
+                    motor_output  = abs(constrain(motor_output, -200, 200));
+                    motorWrite(-60);
+                    Serial.print("\nRev");
+                    Serial.print(motor_output);
+
+                    /*motorWrite(someFlag * motor_output);*/
+                    /*motorCW(abs(motor_output));*/
                 }
-                else{
-                    motor.Fwd(motor_state -= 20);
-                }
+
+                // else {
+                // if (motor_state < 0){
+                // motor.Rev(motor_state -= 20);
+                // }
+                // else{
+                // // motor.Fwd(motor_state -= 20);
+                // }
+                // }
             }
         }
-
-        if ((theta1 < 2-3)) {
-            // if (theta1dot > 0.1) { // going toward
-            // motor_output  = abs(constrain(motor_output, -200, 200));
-            // motor.Rev(motor_output);
-            // /*motorCCW(abs(motor_output));*/
-            // Serial.print("\nRev");
-            // Serial.print(motor_output);
-
-            // }
-
-            if (theta1dot < -0.01) { // going away -- fight!!
-                motor_output = 20 + (k * abs(theta1) + kdot * abs(theta1dot));
-                motor_output  = abs(constrain(motor_output, -200, 200));
-                motor.Rev(motor_output);
-                motor_state = -motor_output;
-                Serial.print("\nRev");
-                Serial.print(motor_output);
-
-                /*motorWrite(someFlag * motor_output);*/
-                /*motorCW(abs(motor_output));*/
-            }
-
-            else {
-                if (motor_state < 0){
-                    motor.Rev(motor_state -= 20);
-                }
-                else{
-                    // motor.Fwd(motor_state -= 20);
-                    }
-            }
-        }
-    }
         else {
             // theta angle small; do nothing or use
             //motor.Stop();
-            motorWrite(1);
-            Serial.print("\nwrite 1");
+            motor.Fwd(1);
+            Serial.print("\nwrite 0");
         }
 
         // SANITY CHECK
@@ -213,9 +211,7 @@ void loop(){
            motor.Stop();
            delay(500);
          */
-
-        prev_time = now;
-}
+    }
 }
 
 // --------- Helper Functions -------
@@ -225,32 +221,21 @@ void loop(){
 
 // Implement bang bang control on theta2 dot dot 
 // -- This is PID loop to control actual motor speed to desired speed 
-void motorWrite(int someValue) {
+void motorWrite(int some_value) {
+    int new_state = motor_state + some_value; 
+    new_state = constrain(new_state, -200, 200);
 
-    if (someValue > 0) {
-        if (prev_theta2 > 0 ) {
-            motor.Fwd(1); //motor.Stop();
-            prev_theta2 = -1;
-        }
-        else {
-            motor.Fwd(someValue);
-            prev_theta2 = 1;
-        }
+    if (new_state > 0) {
+        motor.Fwd(new_state);
     }
-    else if (someValue < 0) { // < 0
-        someValue = abs(someValue);
-        if (prev_theta2 > 0 ) {
-            motor.Rev(someValue);
-            prev_theta2 = -1;
-        }
-        else {
-            motor.Rev(1);
-            prev_theta2 = 1;
-        }
+    else if (new_state < 0) { // < 0
+        motor.Rev(-new_state);
     }
     else {
+        motorWrite(1);
         //do nothing
     }
+    motor_state = new_state;
 }
 
 // -------- Angle Conversion --------
@@ -276,7 +261,7 @@ double getCurrentTheta2() {  // 500 ticks / rev, for motor encoder
 
 // -------- Read encoders --------
 
-ISR(PCINT2_vect) { // motor, on D2 and D3
+ISR(PCINT1_vect) { // motor, on D2 and D3
     unsigned char result = rMotor.process();
     if (result == DIR_NONE) {
     }
@@ -289,7 +274,7 @@ ISR(PCINT2_vect) { // motor, on D2 and D3
     }
 }
 
-ISR(PCINT1_vect) { // stick, on A5 and A4
+ISR(PCINT2_vect) { // stick, on A5 and A4
     unsigned char result = rStick.process();
     if (result == DIR_NONE) {
     }
@@ -307,73 +292,73 @@ ISR(PCINT1_vect) { // stick, on A5 and A4
 
 //---- print help ---------
 int aprintf(char *str, ...) {
-  int i, j, count = 0;
+    int i, j, count = 0;
 
-  va_list argv;
-  va_start(argv, str);
-  for(i = 0, j = 0; str[i] != '\0'; i++) {
-    if (str[i] == '%') {
-      count++;
+    va_list argv;
+    va_start(argv, str);
+    for(i = 0, j = 0; str[i] != '\0'; i++) {
+        if (str[i] == '%') {
+            count++;
 
-      Serial.write(reinterpret_cast<const uint8_t*>(str+j), i-j);
+            Serial.write(reinterpret_cast<const uint8_t*>(str+j), i-j);
 
-      switch (str[++i]) {
-        case 'd': Serial.print(va_arg(argv, int)); // int  
-          break;
-        case 'l': Serial.print(va_arg(argv, long)); // long 
-          break;
-        case 'f': Serial.print(va_arg(argv, double)); // float
-          break;
-        case 'c': Serial.print((char) va_arg(argv, int)); // char
-          break;
-        case 's': Serial.print(va_arg(argv, char *)); // string
-          break;
-        case '%': Serial.print("%");
-          break;
-        default:;
-      };
+            switch (str[++i]) {
+                case 'd': Serial.print(va_arg(argv, int)); // int  
+                          break;
+                case 'l': Serial.print(va_arg(argv, long)); // long 
+                          break;
+                case 'f': Serial.print(va_arg(argv, double)); // float
+                          break;
+                case 'c': Serial.print((char) va_arg(argv, int)); // char
+                          break;
+                case 's': Serial.print(va_arg(argv, char *)); // string
+                          break;
+                case '%': Serial.print("%");
+                          break;
+                default:;
+            };
 
-      j = i+1;
+            j = i+1;
+        }
+    };
+    va_end(argv);
+
+    if(i > j) {
+        Serial.write(reinterpret_cast<const uint8_t*>(str+j), i-j);
     }
-  };
-  va_end(argv);
 
-  if(i > j) {
-    Serial.write(reinterpret_cast<const uint8_t*>(str+j), i-j);
-  }
-
-  return count;
+    return count;
 }
 
 
 void setPwmFrequency(int pin, int divisor) {
-  byte mode = 0;
-  if(pin == 5 || pin == 6 || pin == 9 || pin == 10) {
-    switch(divisor) {
-      case 1: mode = 0x01; break;
-      case 8: mode = 0x02; break;
-      case 64: mode = 0x03; break;
-      case 256: mode = 0x04; break;
-      case 1024: mode = 0x05; break;
-      default: return;
+    byte mode = 0;
+    if(pin == 5 || pin == 6 || pin == 9 || pin == 10) {
+        switch(divisor) {
+            case 1: mode = 0x01; break;
+            case 8: mode = 0x02; break;
+            case 64: mode = 0x03; break;
+            case 256: mode = 0x04; break;
+            case 1024: mode = 0x05; break;
+            default: return;
+        }
+        if(pin == 5 || pin == 6) {
+            TCCR0B = TCCR0B & 0b11111000 | mode;
+        } else {
+            TCCR1B = TCCR1B & 0b11111000 | mode;
+        }
+    } else if(pin == 3 || pin == 11) {
+        switch(divisor) {
+            case 1: mode = 0x01; break;
+            case 8: mode = 0x02; break;
+            case 32: mode = 0x03; break;
+            case 64: mode = 0x04; break;
+            case 128: mode = 0x05; break;
+            case 256: mode = 0x06; break;
+            case 1024: mode = 0x07; break;
+            default: return;
+        }
+        TCCR2B = TCCR2B & 0b11111000 | mode;
     }
-    if(pin == 5 || pin == 6) {
-      TCCR0B = TCCR0B & 0b11111000 | mode;
-    } else {
-      TCCR1B = TCCR1B & 0b11111000 | mode;
-    }
-  } else if(pin == 3 || pin == 11) {
-    switch(divisor) {
-      case 1: mode = 0x01; break;
-      case 8: mode = 0x02; break;
-      case 32: mode = 0x03; break;
-      case 64: mode = 0x04; break;
-      case 128: mode = 0x05; break;
-      case 256: mode = 0x06; break;
-      case 1024: mode = 0x07; break;
-      default: return;
-    }
-    TCCR2B = TCCR2B & 0b11111000 | mode;
-  }
-                // motorWrite(1);
+    // motorWrite(1);
 }
