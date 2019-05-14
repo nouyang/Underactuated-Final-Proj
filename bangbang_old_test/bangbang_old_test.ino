@@ -60,8 +60,8 @@ unsigned long prev_time = 0;
 
 double state[4];
 
-double k = 1.5; // theta constant 
-double kdot = -60; // thetadot 
+double k = 4; // theta constant 
+double kdot = -80; // thetadot 
 
 void setup() {
     Serial.begin(230400);
@@ -77,7 +77,7 @@ void setup() {
 
     /*motorOn();*/
     motor.Enable();
-    motor.SetStepDelay(0);
+    motor.SetStepDelay(1);
     /*setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq*/
 }
 
@@ -118,36 +118,30 @@ void loop(){
     /*aprintf("\n %d %f %d %f %f ", delta_motor, theta1, motor_output, err_theta, err_thetadot);*/
     /*aprintf("\n %f %f %f %f ", theta1, err_theta, theta1dot, err_thetadot);*/
     /*aprintf("\n %f %f ", theta1dot, err_thetadot);*/
+    aprintf("\n t1 %f errtheta %f, errdot %f, motor out %d, t1dot %f", theta1, err_theta, err_thetadot, motor_output, theta1dot);
     /*Serial.println(theta1);*/
     /*Serial.print(delta_motor);*/
 
     /*// -------- write appropriate motor input --------*/
-    motor_output  = abs(constrain(motor_output, -200, 200));
-//    motor_output = 200;
-
-    aprintf("\n t1 %f errtheta %f, errdot %f, motor out %d, t1dot %f", theta1, err_theta, err_thetadot, motor_output, theta1dot);
-
-
-    if (theta1 > 5) {
+    motor_output  = abs(constrain(motor_output, -150, 150));
+    motor_output = 200;
+    if (theta1 > 8) {
         if (theta1dot > 0.01) {
-            motorWrite(-motor_output);
+            motorWrite(motor_output);
             /*motorCCW(abs(motor_output));*/
         }
         else if (theta1dot < 0.01) {
-            motorWrite(motor_output);
+            motorWrite(-motor_output);
             /*motorCW(abs(motor_output));*/
         }
-        else {
-          // do nothing
-        }
     }
-    else if (theta1 < 5) {
+    else if (theta1 < -8) {
         if (theta1dot > 0.01) {
-            motorWrite(-motor_output);
+            motorWrite(motor_output);
             /*motorCCW(abs(motor_output));*/
         }
         else if (theta1dot < -0.01) {
-            motorWrite(motor_output);
+            motorWrite(-motor_output);
             /*motorCW(abs(motor_output));*/
         }
         else {
@@ -156,8 +150,8 @@ void loop(){
     }
     else {
         // theta angle small; do nothing or use
-        motor.Stop();
-        /*motorWrite(1);*/
+        //motor.Stop();
+        motorWrite(1);
     }
 
     // SANITY CHECK
