@@ -27,6 +27,7 @@ int PWMPin = 11;  // Timer2
 int PWMPin2 = 10;
 MegaMotoHB motor(11, 10, 8);
 int motor_output = 0; // command to motor
+int motor_state = 0;
 
 // --------P-Controller--------
 double thetadot_deadband = 0.2;
@@ -67,7 +68,7 @@ double k = 4; // theta constant
 double kdot = -80; // thetadot 
 
 void setup() {
-    Serial.begin(230400);
+    Serial.begin(9600);
     /*Serial.begin(9600); // for use with plotter tool */
 
     rMotor.begin();
@@ -133,35 +134,45 @@ void loop(){
         int someFlag = -1;
         k = 20;
         kdot = 40;
+        if (abs(theta1) < 30){
+        if ((theta1 > 2+2)) {
 
-        if ((theta1 > 2+2) && (abs(theta1) < 30)) {
-
-            if (theta1dot > 0.03) { // going away... slow it down -- FIGHT!
+            if (theta1dot > 0.01) { // going away... slow it down -- FIGHT!
                 /*motorWrite(someFlag * motor_output);*/
                 motor_output = 20 + (k * sq((theta1)) + kdot * abs(theta1dot));
                 motor_output  = abs(constrain(motor_output, -200, 200));
                 motor.Fwd(motor_output); // fight gravity harder
+                Serial.print("\nFwd");
+                Serial.print(motor_output);
             }
 
-            else if (theta1dot < 0.1) { // going towrad .. 
-                /*motorWrite(-someFlag * motor_output);*/
-                motor_output = 60;
-                motor_output  = abs(constrain(motor_output, -200, 200));
+            // if (theta1dot < 0.1) { // going towrad .. 
+                // /*motorWrite(-someFlag * motor_output);*/
+                // motor_output = 60;
+                // motor_output  = abs(constrain(motor_output, -200, 200));
                 // motor.Rev(motor_output);
-            }
+                // Serial.print("\nRev");
+                // Serial.print(motor_output);
+            // }
         }
 
-        else if ((theta1 < 2-2) && (abs(theta1) < 30)) {
-            if (theta1dot > 0.1) { // going toward
-                motor_output  = abs(constrain(motor_output, -200, 200));
-                motor.Rev(motor_output);
-                /*motorCCW(abs(motor_output));*/
-            }
+        if ((theta1 < 2-2)) {
+            // if (theta1dot > 0.1) { // going toward
+                // motor_output  = abs(constrain(motor_output, -200, 200));
+                // motor.Rev(motor_output);
+                // /*motorCCW(abs(motor_output));*/
+                // Serial.print("\nRev");
+                // Serial.print(motor_output);
 
-            else if (theta1dot < -0.03) { // going away -- fight!!
+            // }
+
+            if (theta1dot < -0.01) { // going away -- fight!!
                 motor_output = 20 + (k * sq(theta1) + kdot * abs(theta1dot));
                 motor_output  = abs(constrain(motor_output, -200, 200));
                 motor.Fwd(motor_output);
+                Serial.print("\nFev");
+                Serial.print(motor_output);
+
                 /*motorWrite(someFlag * motor_output);*/
                 /*motorCW(abs(motor_output));*/
             }
@@ -174,7 +185,7 @@ void loop(){
             // theta angle small; do nothing or use
             //motor.Stop();
             motorWrite(1);
-            Serial.println("\nwrite 1");
+            Serial.print("\nwrite 1");
         }
 
         // SANITY CHECK
@@ -187,8 +198,9 @@ void loop(){
            delay(500);
          */
 
-        prev_time = now;
     }
+        prev_time = now;
+}
 }
 
 // --------- Helper Functions -------
@@ -348,4 +360,5 @@ void setPwmFrequency(int pin, int divisor) {
     }
     TCCR2B = TCCR2B & 0b11111000 | mode;
   }
+                // motorWrite(1);
 }
