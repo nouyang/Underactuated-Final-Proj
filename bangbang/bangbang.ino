@@ -43,7 +43,7 @@ double delta_theta1 = 0.0; // get_from_encoder()
 double theta2dot = 0.0; // get_from_encoder()
 double delta_theta2 = 0.0; // get_from_encoder()
 
-double theta1_desired = 0.0;
+double theta1_desired = 180.0;
 double theta1dot_desired = 0.0;
 
 double err_theta = 0.0;
@@ -55,14 +55,17 @@ int prev_motor = 0;
 bool theta_CW;
 bool motor_CW;
 
+int neg = -1;
+int pos = 1;
+
 unsigned long now = 0;
 unsigned long time_elapsed;
 unsigned long prev_time = 0;
 
 double state[4];
 
-double k = 1.5; // theta constant 
-double kdot = -60; // thetadot 
+double k = 4; // theta constant 
+double kdot = -0; // thetadot 
 
 void setup() {
     Serial.begin(230400);
@@ -108,7 +111,10 @@ void loop(){
     // -------- determine motor input --------
     /*Serial.println(motor_speed);*/
 
-    err_theta = theta1 - theta1_desired; 
+    
+//    if (theta1 < 0) {
+    err_theta = abs(theta1) - theta1_desired; 
+//    }
     err_thetadot = theta1dot - theta1dot_desired;
     motor_output = - ceil( k * (theta1 - theta1_desired) - kdot * (theta1dot - theta1dot_desired));
     delta_motor = motor_output - prev_motor;
@@ -124,41 +130,27 @@ void loop(){
 
     /*// -------- write appropriate motor input --------*/
     motor_output  = abs(constrain(motor_output, -200, 200));
-//    motor_output = 200;
+    motor_output = 200;
 
     aprintf("\n t1 %f errtheta %f, errdot %f, motor out %d, t1dot %f", theta1, err_theta, err_thetadot, motor_output, theta1dot);
 
 
-    if (theta1 > 5) {
-        if (theta1dot > 0.01) {
-            motorWrite(-motor_output);
-            /*motorCCW(abs(motor_output));*/
+    if (abs(err_theta) > 3) {
+        if (sgn(theta1)==1) {
+            motor.Rev(motor_output);
         }
-        else if (theta1dot < 0.01) {
-            motorWrite(motor_output);
-            /*motorCW(abs(motor_output));*/
+        else if (sgn(theta1)==-1) {
+          motor.Fwd(motor_output);
         }
+    
         else {
-          // do nothing
         }
-    }
-    else if (theta1 < 5) {
-        if (theta1dot > 0.01) {
-            motorWrite(-motor_output);
-            /*motorCCW(abs(motor_output));*/
-        }
-        else if (theta1dot < -0.01) {
-            motorWrite(motor_output);
-            /*motorCW(abs(motor_output));*/
-        }
-        else {
-            // do nothing
-        }
+         
     }
     else {
         // theta angle small; do nothing or use
-        motor.Stop();
-        /*motorWrite(1);*/
+        motor.Fwd(1);
+         /*motorWrite(1);*/
     }
 
     // SANITY CHECK
@@ -176,6 +168,11 @@ void loop(){
 }
 
 // --------- Helper Functions -------
+static inline int8_t sgn(int val) {
+ if (val < 0) return -1;
+ if (val==0) return 0;
+ return 1;
+}
 
 // -------- Motor Funcs --------
 
