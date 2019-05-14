@@ -132,54 +132,69 @@ void loop(){
         motor_output = 70;
 
         int someFlag = -1;
-        k = 20;
+        k = 50;
         kdot = 40;
         if (abs(theta1) < 30){
-        if ((theta1 > 2+2)) {
+        if ((theta1 > 2+3)) {
 
             if (theta1dot > 0.01) { // going away... slow it down -- FIGHT!
                 /*motorWrite(someFlag * motor_output);*/
-                motor_output = 20 + (k * sq((theta1)) + kdot * abs(theta1dot));
+                motor_output = 20 + (k * abs((theta1)) + kdot * abs(theta1dot));
                 motor_output  = abs(constrain(motor_output, -200, 200));
                 motor.Fwd(motor_output); // fight gravity harder
+                motor_state = motor_output;
                 Serial.print("\nFwd");
                 Serial.print(motor_output);
             }
 
             // if (theta1dot < 0.1) { // going towrad .. 
-                // /*motorWrite(-someFlag * motor_output);*/
-                // motor_output = 60;
-                // motor_output  = abs(constrain(motor_output, -200, 200));
-                // motor.Rev(motor_output);
-                // Serial.print("\nRev");
-                // Serial.print(motor_output);
+            // /*motorWrite(-someFlag * motor_output);*/
+            // motor_output = 60;
+            // motor_output  = abs(constrain(motor_output, -200, 200));
+            // motor.Rev(motor_output);
+            // Serial.print("\nRev");
+            // Serial.print(motor_output);
             // }
+            else {
+                if (motor_state < 0){
+                    // motor.Rev(motor_state -= 20);
+                }
+                else{
+                    motor.Fwd(motor_state -= 20);
+                }
+            }
         }
 
-        if ((theta1 < 2-2)) {
+        if ((theta1 < 2-3)) {
             // if (theta1dot > 0.1) { // going toward
-                // motor_output  = abs(constrain(motor_output, -200, 200));
-                // motor.Rev(motor_output);
-                // /*motorCCW(abs(motor_output));*/
-                // Serial.print("\nRev");
-                // Serial.print(motor_output);
+            // motor_output  = abs(constrain(motor_output, -200, 200));
+            // motor.Rev(motor_output);
+            // /*motorCCW(abs(motor_output));*/
+            // Serial.print("\nRev");
+            // Serial.print(motor_output);
 
             // }
 
             if (theta1dot < -0.01) { // going away -- fight!!
-                motor_output = 20 + (k * sq(theta1) + kdot * abs(theta1dot));
+                motor_output = 20 + (k * abs(theta1) + kdot * abs(theta1dot));
                 motor_output  = abs(constrain(motor_output, -200, 200));
                 motor.Rev(motor_output);
-                Serial.print("\nFev");
+                motor_state = -motor_output;
+                Serial.print("\nRev");
                 Serial.print(motor_output);
 
                 /*motorWrite(someFlag * motor_output);*/
                 /*motorCW(abs(motor_output));*/
             }
 
-            // else {
-                // motorWrite(1);
-            // }
+            else {
+                if (motor_state < 0){
+                    motor.Rev(motor_state -= 20);
+                }
+                else{
+                    // motor.Fwd(motor_state -= 20);
+                    }
+            }
         }
     }
         else {
