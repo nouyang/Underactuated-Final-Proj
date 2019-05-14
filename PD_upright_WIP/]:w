@@ -32,7 +32,7 @@ int motor_output = 0; // command to motor
 double thetadot_deadband = 0.2;
 double theta_deadband = 5;
 
-int sample_time = 2; // 15 msec
+int sample_time = 5; // 15 msec
 
 double theta1 = 0.0; // get_from_encoder()
 double theta2 = 0.0; // get_from_encoder()
@@ -131,50 +131,40 @@ void loop(){
         motor_output = 70;
 
         int someFlag = -1;
-        k = 20;
-        kdot = 40;
 
-        if ((theta1 > 2+2) && (abs(theta1) < 30)) {
+        if (theta1 > 8) {
 
-            if (theta1dot > 0.03) { // going away... slow it down -- FIGHT!
+            if (theta1dot > 0.1) { // going away... slow it down
                 /*motorWrite(someFlag * motor_output);*/
-                motor_output = 20 + (k * sq((theta1)) + kdot * abs(theta1dot));
-                motor_output  = abs(constrain(motor_output, -200, 200));
-                motor.Fwd(motor_output); // fight gravity harder
+                motor.Fwd(150);
             }
 
             else if (theta1dot < 0.1) { // going towrad .. 
                 /*motorWrite(-someFlag * motor_output);*/
-                motor_output = 60;
-                motor_output  = abs(constrain(motor_output, -200, 200));
-                // motor.Rev(motor_output);
+                motor.Fwd(60); // fight gravity harder
             }
         }
 
-        else if ((theta1 < 2-2) && (abs(theta1) < 30)) {
+        else if (theta1 < -8) {
             if (theta1dot > 0.1) { // going toward
-                motor_output  = abs(constrain(motor_output, -200, 200));
-                motor.Rev(motor_output);
+                motor.Rev(60);
                 /*motorCCW(abs(motor_output));*/
             }
 
-            else if (theta1dot < -0.03) { // going away -- fight!!
-                motor_output = 20 + (k * sq(theta1) + kdot * abs(theta1dot));
-                motor_output  = abs(constrain(motor_output, -200, 200));
-                motor.Fwd(motor_output);
+            else if (theta1dot < -0.1) { // going away
                 /*motorWrite(someFlag * motor_output);*/
+                motor.Rev(150);
                 /*motorCW(abs(motor_output));*/
             }
 
-            // else {
-                // motorWrite(1);
-            // }
+            else {
+                motorWrite(1);
+            }
         }
         else {
             // theta angle small; do nothing or use
             //motor.Stop();
             motorWrite(1);
-            Serial.println("\nwrite 1");
         }
 
         // SANITY CHECK
@@ -348,4 +338,4 @@ void setPwmFrequency(int pin, int divisor) {
     }
     TCCR2B = TCCR2B & 0b11111000 | mode;
   }
-}
+ino}
