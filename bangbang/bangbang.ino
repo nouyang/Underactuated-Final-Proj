@@ -130,29 +130,22 @@ void loop(){
 
     /*// -------- write appropriate motor input --------*/
     motor_output  = abs(constrain(motor_output, -200, 200));
-    motor_output = 200;
+    motor_output = 210;
 
     aprintf("\n t1 %f errtheta %f, errdot %f, motor out %d, t1dot %f", theta1, err_theta, err_thetadot, motor_output, theta1dot);
 
-
-    if (abs(err_theta) > 3) {
-        if (sgn(theta1)==1) {
+    if (theta1 > 0 && theta1dot < 0){ 
+        if ((theta1 <= 175) && (theta1 >= 165)){
             motor.Rev(motor_output);
+            Serial.println("\nRev");
         }
-        else if (sgn(theta1)==-1) {
-          motor.Fwd(motor_output);
-        }
-    
-        else {
-        }
-         
     }
-    else {
-        // theta angle small; do nothing or use
-        motor.Fwd(1);
-         /*motorWrite(1);*/
+    else if ((theta1 < 0) && (theta1dot > 0)){
+        if ((theta1 <= -165) && (theta1 >= -175)) {
+            motor.Fwd(motor_output);
+            Serial.println("\nFwd");
+        }
     }
-
     // SANITY CHECK
     /*
     motor.Rev(200);
