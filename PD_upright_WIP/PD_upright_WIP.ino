@@ -169,7 +169,7 @@ void loop(){
             if (theta1dot < -0.01) { // going away -- fight!!
                 motor_output = 20 + (k * sq(theta1) + kdot * abs(theta1dot));
                 motor_output  = abs(constrain(motor_output, -200, 200));
-                motor.Fwd(motor_output);
+                motor.Rev(motor_output);
                 Serial.print("\nFev");
                 Serial.print(motor_output);
 
@@ -181,6 +181,7 @@ void loop(){
                 // motorWrite(1);
             // }
         }
+    }
         else {
             // theta angle small; do nothing or use
             //motor.Stop();
@@ -198,7 +199,6 @@ void loop(){
            delay(500);
          */
 
-    }
         prev_time = now;
 }
 }
