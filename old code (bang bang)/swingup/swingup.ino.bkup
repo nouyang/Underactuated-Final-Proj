@@ -1,5 +1,4 @@
-// PD downright point: key nishgt: must have different gains for going toward
-// and away from downright point, due to aid of gravity.
+// this one accidentally swings up
 // bang bang controller 
 // 13 May 2019
 
@@ -62,8 +61,8 @@ unsigned long prev_time = 0;
 
 double state[4];
 
-double k = 4; // theta constant 
-double kdot = -80; // thetadot 
+double k = 2; // theta constant 
+double kdot = -60; // thetadot 
 
 void setup() {
     Serial.begin(230400);
@@ -79,7 +78,7 @@ void setup() {
 
     /*motorOn();*/
     motor.Enable();
-    motor.SetStepDelay(1);
+    motor.SetStepDelay(0);
     /*setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq*/
 }
 
@@ -99,6 +98,7 @@ void loop(){
     delta_theta1 = theta1 - prev_theta1;
     theta1dot = delta_theta1 / time_elapsed;
     theta2dot = delta_theta2 / time_elapsed;
+    prev_theta2 = theta2;
     prev_theta1 = theta1;
     state[0] = theta1;
     state[1] = theta2;
@@ -119,46 +119,46 @@ void loop(){
     /*aprintf("\n %d %f %d %f %f ", delta_motor, theta1, motor_output, err_theta, err_thetadot);*/
     /*aprintf("\n %f %f %f %f ", theta1, err_theta, theta1dot, err_thetadot);*/
     /*aprintf("\n %f %f ", theta1dot, err_thetadot);*/
-    aprintf("\n t1 %f errtheta %f, errdot %f, motor out %d, t1dot %f", theta1, err_theta, err_thetadot, motor_output, theta1dot);
     /*Serial.println(theta1);*/
     /*Serial.print(delta_motor);*/
 
     /*// -------- write appropriate motor input --------*/
-    //motor_output = 75 * err_thetadot;
-    /*motor_output = 5 * theta1;*/
     motor_output  = abs(constrain(motor_output, -200, 200));
-    motor_output = 70;
+//    motor_output = 200;
 
-    int someFlag = -1;
+    aprintf("\n t1 %f errtheta %f, errdot %f, motor out %d, t1dot %f", theta1, err_theta, err_thetadot, motor_output, theta1dot);
 
-    if (theta1 > 8) {
-        if (theta1dot > 0.1) { // going away... slow it down
-            /*motorWrite(someFlag * motor_output);*/
-            motor.Rev(50);
-        }
-        else if (theta1dot < 0.1) { // going towrad .. 
-            /*motorWrite(-someFlag * motor_output);*/
-            motor.Fwd(70);
-        }
-    }
-    else if (theta1 < -8) {
-        if (theta1dot > 0.1) { // going toward
-            motor.Rev(70);
+
+    if (theta1 > 5) {
+        if (theta1dot > 0.01) {
+            motorWrite(-motor_output);
             /*motorCCW(abs(motor_output));*/
         }
-        else if (theta1dot < -0.1) { // going away
-            /*motorWrite(someFlag * motor_output);*/
-            motor.Fwd(50);
+        else if (theta1dot < 0.01) {
+            motorWrite(motor_output);
             /*motorCW(abs(motor_output));*/
         }
         else {
-          motorWrite(1);
-          }
+          // do nothing
+        }
+    }
+    else if (theta1 < 5) {
+        if (theta1dot > 0.01) {
+            motorWrite(-motor_output);
+            /*motorCCW(abs(motor_output));*/
+        }
+        else if (theta1dot < -0.01) {
+            motorWrite(motor_output);
+            /*motorCW(abs(motor_output));*/
+        }
+        else {
+            // do nothing
+        }
     }
     else {
         // theta angle small; do nothing or use
-        //motor.Stop();
-        motorWrite(1);
+        motor.Stop();
+        /*motorWrite(1);*/
     }
 
     // SANITY CHECK
@@ -185,25 +185,13 @@ void loop(){
 void motorWrite(int someValue) {
 
     if (someValue > 0) {
-        if (prev_theta2 > 0 ) {
-        motor.Fwd(1); //motor.Stop();
-        prev_theta2 = -1;
-        }
-        else {
-        motor.Fwd(someValue);
-        prev_theta2 = 1;
-        }
+        if (theta2dot > 0 ) motor.Rev(someValue); //motor.Stop();
+        else motor.Rev(someValue);
     }
     else if (someValue < 0) { // < 0
         someValue = abs(someValue);
-        if (prev_theta2 > 0 ) {
-            motor.Rev(someValue);
-        prev_theta2 = -1;
-        }
-        else {
-        motor.Rev(1);
-        prev_theta2 = 1;
-        }
+        if (theta2dot > 0 ) motor.Fwd(someValue);
+        else motor.Fwd(someValue);
     }
     else {
         //do nothing
