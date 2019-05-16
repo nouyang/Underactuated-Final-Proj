@@ -68,18 +68,10 @@ double state[4];
 double k = 4; // theta constant 
 double kdot = -80; // thetadot 
 
-const int buttonEStopPin = 6;     // the number of the pushbutton pin 
 // PIN 5 SOMEHOW RELATED TO MOTOR !  ! ! 
 
 const int ledPin =  12;      // the number of the LED pin
 
-int buttonEStopState = 0;         // variable for reading the pushbutton status
-int EStopFlag = 0;
-int lastButtonState = LOW;   // the previous reading from the input pin
-int ledState = LOW;
-
-unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
-unsigned long debounceDelay = 50;    // the debounce time; increase if the output flickers
 
 
 void setup() {
@@ -89,8 +81,6 @@ void setup() {
     // rMotor.begin();
     rStick.begin();
 
-    pinMode(buttonEStopPin, INPUT);
-    pinMode(ledPin, OUTPUT);
 
 
     // Enable interrupts for the two encoders
@@ -108,27 +98,6 @@ void setup() {
 
 void loop(){
     // -------- update time --------
-    int reading = digitalRead(buttonEStopPin);
-    motor.Fwd(200);
-
-    if (reading!= lastButtonState) {
-        // reset the debouncing timer
-        lastDebounceTime = millis();
-    }
-    if ((millis() - lastDebounceTime) > debounceDelay) {
-        if (buttonEStopState != reading) {
-            buttonEStopState = reading;
-            if (buttonEStopState == HIGH) { // if click button
-                Serial.println("estop button was hit! ---------------");
-
-                EStopFlag = !EStopFlag;
-                aprintf("estop flag = %d", EStopFlag);
-                ledState = !ledState;
-            }
-        }
-    }
-    if (not EStopFlag) {
-        Serial.println("Trying to drive now");
         now = millis();
         time_elapsed = (now - prev_time);
         if (time_elapsed >= sample_time)
@@ -244,20 +213,19 @@ void loop(){
                         /*motorCW(abs(motor_output));*/
                     }
 
-                    // else {
-                    // if (motor_state < 0){
-                    // motor.Rev(motor_state -= 20);
-                    // }
-                    // else{
-                    // // motor.Fwd(motor_state -= 20);
-                    // }
-                    // }
+                    else {
+                    if (motor_state < 0){
+                    motor.Rev(motor_state -= 20);
+                    }
+                    else{
+                    motor.Fwd(motor_state -= 20);
+                    }
+                    }
+                }
+                else{
+                    motor.Stop();
                 }
             }
-        }
-        else if (EStopFlag) {
-            Serial.println("Moto stopped");
-            // motor.Stop();
         }
 
             // SANITY CHECK
@@ -270,9 +238,6 @@ void loop(){
                delay(500);
              */
 
-        digitalWrite(ledPin, ledState);
-        lastButtonState = reading;
-}
 
     // --------- Helper Functions -------
 
@@ -286,10 +251,10 @@ void loop(){
         new_state = constrain(new_state, -200, 200);
 
         if (new_state > 0) {
-            // motor.Fwd(new_state);
+            motor.Fwd(new_state);
         }
         else if (new_state < 0) { // < 0
-            // motor.Rev(-new_state);
+            motor.Rev(-new_state);
         }
         else {
             // motorWrite(1);
