@@ -1,4 +1,5 @@
-// Video version
+// 
+// working on incorporating  wswing up code
 
 #include <Rotary.h>
 #include <MegaMotoHB.h>
@@ -34,6 +35,7 @@ int sample_time = 0; // 15 msec
 
 double theta1 = 0.0; // get_from_encoder()
 double theta2 = 0.0; // get_from_encoder()
+double modified_theta1 = 0.01;
 double prev_theta1 = 0.0; // get_from_encoder()
 double prev_theta2 = 0.0; // get_from_encoder()
 
@@ -99,8 +101,8 @@ double k = 40;
 double kdot = 200;
 
 void loop(){
-    potSensorValue = analogRead(analogInPin);
-    outputValue = map(potSensorValue, 0, 1023, -10, 10);
+    // potSensorValue = analogRead(analogInPin);
+    // outputValue = map(potSensorValue, 0, 1023, -10, 10);
 
     aprintf("pot value %d", outputValue);
 
@@ -136,26 +138,52 @@ void loop(){
         /*// -------- write appropriate motor input --------*/
 
         int someFlag = -1;
-        if (abs(theta1) < 30) {
+
+        if (abs(theta1) > 5) { // commence swing up 
+            modified_theta1 = theta1 - 183;
+            aprintf("\n mod t1 %f", modified_theta1);
+            motor_output = 220;
+            if (modified_theta1 > 1) {
+                if (theta1dot > 0.01) {
+                    motor.Rev(motor_output);
+                    /*motorCCW(abs(motor_output));*/
+                }
+                else if (theta1dot < 0.01) {
+                    motor.Fwd(-motor_output);
+                    /*motorCW(abs(motor_output));*/
+                }
+                else {
+                    // motor.Stop();
+                }
+
+            }
+            else if (modified_theta1 < -1) {
+                if (theta1dot < -0.01) {
+                    motor.Fwd(-motor_output);
+                    /*motorCCW(abs(motor_output));*/
+                }
+                else if (theta1dot > -0.01) {
+                    motor.Rev(motor_output);
+                    /*motorCW(abs(motor_output));*/
+                }
+                else {
+                    // motor.Stop();
+                }
+            }
+
+
+        }
+        else { // Don't apply at the beginning / after it's fallen 
+        // else if (abs(theta1) < 5) { // Don't apply at the beginning / after it's fallen 
             // apply controsl
             motor_output = ceil(k * (theta1 - theta1_desired) + kdot * (theta1dot - theta1dot_desired));
-
-            // if ((err_theta + err_thetadot) == 0) {
-                // motor_output = 0;
-            // }
 
             aprintf(" motor_output %d ", motor_output);
             motor_output = constrain(motor_output, -220, 220);
             if (motor_output > 0){
-                if (prev_motor == motor_output) {
-                    // motor_output -= 20;
-                }
                 motor.Fwd(motor_output);
             }
             else if (motor_output < 0){
-                if (prev_motor == motor_output) {
-                    // motor_output += 20;
-                }
                 Serial.print("reverse la");
                 motor.Rev(abs(motor_output));
             }
@@ -164,31 +192,9 @@ void loop(){
             }
             prev_motor = motor_output;
 
-            //print help
-            if (theta1 > 1) {
-                if (theta1dot > 0.01) { // going away... slow it down -- FIGHT!
-                    // Serial.print("help, I'm on the right falling away from the fixed point!");
-                }
-
-                if (theta1dot < 0.1) { // going towrad .. 
-                    // Serial.print("I'm falling from the right CCW toward the fixed point!");
-                }
-            }
-
-            else if ((theta1 < 1)) {
-                if (theta1dot > 0.1) { // going toward
-                    // Serial.print("I'm on the left falling CW toward the fixed point!");
-                }
-
-                if (theta1dot < -0.01) { // going away -- fight!!
-                    // Serial.print("help, I'm on the left falling away from the fixed point!");
-                }
-            }
         }
 
-        else {
-            motor.Stop();
-        }
+
     }
 }
 
@@ -207,29 +213,9 @@ void loop(){
 
 // -------- Motor Funcs --------
 
-
-// Implement bang bang control on theta2 dot dot 
-// -- This is PID loop to control actual motor speed to desired speed 
-void motorWrite(int some_value) {
-    int new_state = motor_state + some_value; 
-    new_state = constrain(new_state, -200, 200);
-
-    if (new_state > 0) {
-        motor.Fwd(new_state);
-    }
-    else if (new_state < 0) { // < 0
-        motor.Rev(-new_state);
-    }
-    else {
-        // motorWrite(1);
-        //do nothing
-    }
-    motor_state = new_state;
-}
-
 // -------- Angle Conversion --------
 double getCurrentTheta1() { // calibration for stick encoder = 1250
-    double val = (double(encoder1Pos) / 1250) * 360 + 180 + -2; //+180 for move fp to top // outputValue
+    double val = (double(encoder1Pos) / 1250) * 360 + 180 + -3; //+180 for move fp to top // outputValue
     val = fmod(val, 360);
     if (val > 180) {
         val = val - 360;
