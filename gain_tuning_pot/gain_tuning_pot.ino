@@ -96,9 +96,9 @@ void setup() {
     /*setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq*/
 }
 
-double k = 40;
+double k = 35;
     // kdot = 500; // 100
-double kdot = 200;
+double kdot = 250;
 
 void loop(){
     // potSensorValue = analogRead(analogInPin);
@@ -118,6 +118,7 @@ void loop(){
         // -------- update theta --------
 
         theta1 = getCurrentTheta1();
+        modified_theta1 = getCurrentDownTheta1();
         delta_theta1 = theta1 - prev_theta1;
         // remove calcs from neg/pos transition @ downright fixed point
         // if (abs(delta_theta1 / time_elapsed) <= 1){ 
@@ -139,47 +140,13 @@ void loop(){
 
         int someFlag = -1;
 
-        if (abs(theta1) > 5) { // commence swing up 
-            modified_theta1 = theta1 - 183;
-            aprintf("\n mod t1 %f", modified_theta1);
-            motor_output = 220;
-            if (modified_theta1 > 1) {
-                if (theta1dot > 0.01) {
-                    motor.Rev(motor_output);
-                    /*motorCCW(abs(motor_output));*/
-                }
-                else if (theta1dot < 0.01) {
-                    motor.Fwd(-motor_output);
-                    /*motorCW(abs(motor_output));*/
-                }
-                else {
-                    // motor.Stop();
-                }
-
-            }
-            else if (modified_theta1 < -1) {
-                if (theta1dot < -0.01) {
-                    motor.Fwd(-motor_output);
-                    /*motorCCW(abs(motor_output));*/
-                }
-                else if (theta1dot > -0.01) {
-                    motor.Rev(motor_output);
-                    /*motorCW(abs(motor_output));*/
-                }
-                else {
-                    // motor.Stop();
-                }
-            }
-
-
-        }
-        else { // Don't apply at the beginning / after it's fallen 
+        if (abs(theta1) < 8) { // commence swing up  (it's ouside +-3 from the top)
         // else if (abs(theta1) < 5) { // Don't apply at the beginning / after it's fallen 
             // apply controsl
             motor_output = ceil(k * (theta1 - theta1_desired) + kdot * (theta1dot - theta1dot_desired));
 
             aprintf(" motor_output %d ", motor_output);
-            motor_output = constrain(motor_output, -220, 220);
+            motor_output = constrain(motor_output, -230, 230);
             if (motor_output > 0){
                 motor.Fwd(motor_output);
             }
@@ -191,6 +158,50 @@ void loop(){
                 // motor.Stop();
             }
             prev_motor = motor_output;
+
+
+
+        }
+        else { // Don't apply at the beginning / after it's fallen 
+            aprintf("mod t1 %f", modified_theta1);
+            motor_output = 218;
+            if (modified_theta1 > 8) {
+                // if (theta1 < 10)  {
+                    // if (theta1dot > 0.01) { motor.Fwd(motor_output); }
+                    // else if (theta1dot < -0.1) { motor.Rev(motor_output);}
+                // }
+                    
+                if (theta1dot > 0.01) {
+                    motor.Rev(motor_output);
+                    /*motorCCW(abs(motor_output));*/
+                }
+                else if (theta1dot < -0.1) {
+                    motor.Fwd(motor_output);
+                    /*motorCW(abs(motor_output));*/
+                }
+                else {
+                    // motor.Stop();
+                }
+
+            }
+            else if (modified_theta1 < -8) {
+                // if (theta1 > -10 ) {
+                    // if (theta1dot > 0.01) { motor.Fwd(motor_output); }
+                    // else if (theta1dot < -0.1) { motor.Rev(motor_output);}
+                // }
+
+                if (theta1dot >  0.01) {
+                    motor.Rev(motor_output);
+                    /*motorCCW(abs(motor_output));*/
+                }
+                else if (theta1dot < -0.1) {
+                    motor.Fwd(motor_output);
+                    /*motorCW(abs(motor_output));*/
+                }
+                else {
+                    // motor.Stop();
+                }
+            }
 
         }
 
@@ -215,7 +226,16 @@ void loop(){
 
 // -------- Angle Conversion --------
 double getCurrentTheta1() { // calibration for stick encoder = 1250
-    double val = (double(encoder1Pos) / 1250) * 360 + 180 + -3; //+180 for move fp to top // outputValue
+    double val = (double(encoder1Pos) / 1250) * 360 + 180 -2; //+180 for move fp to top // outputValue
+    val = fmod(val, 360);
+    if (val > 180) {
+        val = val - 360;
+    }
+    return val;
+}
+
+double getCurrentDownTheta1() { // calibration for stick encoder = 1250
+    double val = (double(encoder1Pos) / 1250) * 360; //+180 for move fp to top // outputValue
     val = fmod(val, 360);
     if (val > 180) {
         val = val - 360;
