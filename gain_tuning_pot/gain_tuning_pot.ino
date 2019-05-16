@@ -93,12 +93,13 @@ void setup() {
     /*setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq*/
 }
 
-double k = 0; // theta constant 
-double kdot = 430; // thetadot 
+double k = 40;
+    // kdot = 500; // 100
+double kdot = 200;
 
 void loop(){
     potSensorValue = analogRead(analogInPin);
-    outputValue = map(potSensorValue, 0, 1023, 0, 100);
+    outputValue = map(potSensorValue, 0, 1023, -10, 10);
 
     aprintf("pot value %d", outputValue);
 
@@ -134,10 +135,7 @@ void loop(){
         /*// -------- write appropriate motor input --------*/
 
         int someFlag = -1;
-        k = outputValue;
-        // kdot = 500; // 100
-        kdot = 250;
-        if (abs(theta1) < 100) {
+        if (abs(theta1) < 30) {
             // apply controsl
             motor_output = ceil(k * (theta1 - theta1_desired) + kdot * (theta1dot - theta1dot_desired));
 
@@ -230,7 +228,7 @@ void motorWrite(int some_value) {
 
 // -------- Angle Conversion --------
 double getCurrentTheta1() { // calibration for stick encoder = 1250
-    double val = (double(encoder1Pos) / 1250) * 360; //+180 for move fp to top
+    double val = (double(encoder1Pos) / 1250) * 360 + 180 + -2; //+180 for move fp to top // outputValue
     val = fmod(val, 360);
     if (val > 180) {
         val = val - 360;
