@@ -132,7 +132,7 @@ void loop(){
 
         int someFlag = -1;
         k = 0;
-        kdot = 900; // 100
+        kdot = 100; // 100
         if (abs(theta1) < 30) {
             // apply controsl
             motor_output = ceil(k * (theta1 - theta1_desired) + kdot * (theta1dot - theta1dot_desired));
@@ -142,22 +142,22 @@ void loop(){
             // }
 
             aprintf(" motor_output %d ", motor_output);
-            motor_output = constrain(motor_output, -200, 200);
+            motor_output = constrain(motor_output, -220, 220);
             if (motor_output > 0){
                 if (prev_motor == motor_output) {
                     // motor_output -= 20;
                 }
-                Serial.print("reverse la");
                 motor.Fwd(motor_output);
             }
-            if (motor_output < 0){
+            else if (motor_output < 0){
                 if (prev_motor == motor_output) {
                     // motor_output += 20;
                 }
+                Serial.print("reverse la");
                 motor.Rev(abs(motor_output));
             }
             else {
-                motor.Stop();
+                // motor.Stop();
             }
             prev_motor = motor_output;
 
