@@ -14,8 +14,8 @@
 int val;
 volatile int encoder1Pos = 0;
 volatile int encoder2Pos = 0;
-Rotary rStick = Rotary(2, 3); // motor (theta2)
-Rotary rMotor = Rotary(A5, A4);  // stick (theta1)
+// Rotary rMotor = Rotary(2, 3); // motor (theta2)
+Rotary rStick = Rotary(A5, A4);  // stick (theta1)
 int n = LOW;
 /*const byte CPin = 0;  // analog input channel*/
 /*int CRaw;      // raw A/D value*/
@@ -69,7 +69,7 @@ double k = 4; // theta constant
 double kdot = -80; // thetadot 
 
 const int buttonEStopPin = 6;     // the number of the pushbutton pin 
-// PIN 5 SOMEHOW RELATED TO MOTOR ! 
+// PIN 5 SOMEHOW RELATED TO MOTOR !  ! ! 
 
 const int ledPin =  12;      // the number of the LED pin
 
@@ -94,8 +94,8 @@ void setup() {
 
 
     // Enable interrupts for the two encoders
-    PCICR |= (1 << PCIE2); 
-    PCMSK2 |= (1 << PCINT18) | (1 << PCINT19); // Pins D2 and D3 
+    // PCICR |= (1 << PCIE2); 
+    // PCMSK2 |= (1 << PCINT18) | (1 << PCINT19); // Pins D2 and D3 
     PCICR |= (1 << PCIE1); //RIP changed motors, no motor encoder now
     PCMSK1 |= (1 << PCINT13) | (1 << PCINT12); // Pins A5 and A4 
     sei();
@@ -109,6 +109,7 @@ void setup() {
 void loop(){
     // -------- update time --------
     int reading = digitalRead(buttonEStopPin);
+    motor.Fwd(200);
 
     if (reading!= lastButtonState) {
         // reset the debouncing timer
@@ -119,157 +120,155 @@ void loop(){
             buttonEStopState = reading;
             if (buttonEStopState == HIGH) { // if click button
                 Serial.println("estop button was hit! ---------------");
+
                 EStopFlag = !EStopFlag;
+                aprintf("estop flag = %d", EStopFlag);
                 ledState = !ledState;
-                digitalWrite(ledPin, lastButtonState);
-                Serial.print("new state EStkopFlagd");
-                Serial.print(EStopFlag);
             }
         }
-    // else if (not EStopFlag) {
-        // motor.Enable();
-        // Serial.println("Trying to drive now");
-        // now = millis();
-        // time_elapsed = (now - prev_time);
-        // if (time_elapsed >= sample_time)
-            // {
-                // prev_time = now;
+    }
+    if (not EStopFlag) {
+        Serial.println("Trying to drive now");
+        now = millis();
+        time_elapsed = (now - prev_time);
+        if (time_elapsed >= sample_time)
+            {
+                prev_time = now;
 
-                // // -------- update theta --------
+                // -------- update theta --------
 
-                // // theta2 = getCurrentTheta2();
-                // theta1 = getCurrentTheta1();
-                // delta_theta1 = theta1 - prev_theta1;
-                // // delta_theta2 = theta2 - prev_theta2;
-            // theta1dot = delta_theta1 / time_elapsed;
-            // // theta2dot = delta_theta2 / time_elapsed;
-                // prev_theta1 = theta1;
-                // state[0] = theta1;
-                // // state[1] = theta2;
-                // state[2] = theta1dot;
-                // // state[3] = theta2dot;
+                // theta2 = getCurrentTheta2();
+                theta1 = getCurrentTheta1();
+                delta_theta1 = theta1 - prev_theta1;
+                // delta_theta2 = theta2 - prev_theta2;
+                theta1dot = delta_theta1 / time_elapsed;
+            // theta2dot = delta_theta2 / time_elapsed;
+                prev_theta1 = theta1;
+                state[0] = theta1;
+                // state[1] = theta2;
+                state[2] = theta1dot;
+                // state[3] = theta2dot;
 
-                // // -------- determine motor input --------
-                // /*Serial.println(motor_speed);*/
+                // -------- determine motor input --------
+                /*Serial.println(motor_speed);*/
 
-                // err_theta = theta1 - theta1_desired; 
-                // err_thetadot = theta1dot - theta1dot_desired;
-                // motor_output = - ceil( k * (theta1 - theta1_desired) - kdot * (theta1dot - theta1dot_desired));
-                // delta_motor = motor_output - prev_motor;
-                // prev_motor = motor_output;
-                // //    Serial.print(motor_output);
-                // /*aprintf("\ntheta1 %f, t2 %f, t1dot %f, t2dot %f, out %d, deltath %f, cw ", */
-                // /*theta1, theta2, theta1dot, theta2dot, motor_output, delta_theta1);*/
-                // /*aprintf("\n %d %f %d %f %f ", delta_motor, theta1, motor_output, err_theta, err_thetadot);*/
-                // /*aprintf("\n %f %f %f %f ", theta1, err_theta, theta1dot, err_thetadot);*/
-                // /*aprintf("\n %f %f ", theta1dot, err_thetadot);*/
-                // aprintf("\n t1 %f errtheta %f, errdot %f, motor out %d, t1dot %f", theta1, err_theta, err_thetadot, motor_output, theta1dot);
-                // /*Serial.println(theta1);*/
-                // /*Serial.print(delta_motor);*/
+                err_theta = theta1 - theta1_desired; 
+                err_thetadot = theta1dot - theta1dot_desired;
+                motor_output = - ceil( k * (theta1 - theta1_desired) - kdot * (theta1dot - theta1dot_desired));
+                delta_motor = motor_output - prev_motor;
+                prev_motor = motor_output;
+                //    Serial.print(motor_output);
+                /*aprintf("\ntheta1 %f, t2 %f, t1dot %f, t2dot %f, out %d, deltath %f, cw ", */
+                /*theta1, theta2, theta1dot, theta2dot, motor_output, delta_theta1);*/
+                /*aprintf("\n %d %f %d %f %f ", delta_motor, theta1, motor_output, err_theta, err_thetadot);*/
+                /*aprintf("\n %f %f %f %f ", theta1, err_theta, theta1dot, err_thetadot);*/
+                /*aprintf("\n %f %f ", theta1dot, err_thetadot);*/
+                aprintf("\n t1 %f errtheta %f, errdot %f, motor out %d, t1dot %f", theta1, err_theta, err_thetadot, motor_output, theta1dot);
+                /*Serial.println(theta1);*/
+                /*Serial.print(delta_motor);*/
 
-                // /*// -------- write appropriate motor input --------*/
-                // //motor_output = 75 * err_thetadot;
-                // /*motor_output = 5 * theta1;*/
-                // motor_output  = abs(constrain(motor_output, -200, 200));
-                // motor_output = 70;
+                /*// -------- write appropriate motor input --------*/
+                //motor_output = 75 * err_thetadot;
+                /*motor_output = 5 * theta1;*/
+                motor_output  = abs(constrain(motor_output, -200, 200));
+                motor_output = 70;
 
-                // int someFlag = -1;
-                // k = 10;
-                // kdot = 10;
+                int someFlag = -1;
+                k = 10;
+                kdot = 10;
+                if (abs(theta1) < 30){
 
-                // if (abs(theta1) < 30){
+                    if ((theta1 > 2+1)) {
+                        if (theta1dot > 0.01) { // going away... slow it down -- FIGHT!
+                            /*motorWrite(someFlag * motor_output);*/
+                            motor_output = 20 + (k * abs((theta1)) + kdot * abs(theta1dot));
+                            motor_output  = abs(constrain(motor_output, -200, 200));
+                            motorWrite(+60); // fight gravity harder
+                        }
 
-                    // if ((theta1 > 2+1)) {
-                        // if (theta1dot > 0.01) { // going away... slow it down -- FIGHT!
-                            // /*motorWrite(someFlag * motor_output);*/
-                            // motor_output = 20 + (k * abs((theta1)) + kdot * abs(theta1dot));
-                            // motor_output  = abs(constrain(motor_output, -200, 200));
-                            // motorWrite(+60); // fight gravity harder
+                        // if (theta1dot < 0.1) { // going towrad .. 
+                        // /*motorWrite(-someFlag * motor_output);*/
+                        // motor_output = 60;
+                        // motor_output  = abs(constrain(motor_output, -200, 200));
+                        // motor.Rev(motor_output);
+                        // Serial.print("\nRev");
+                        // Serial.print(motor_output);
                         // }
 
-                        // // if (theta1dot < 0.1) { // going towrad .. 
-                        // // /*motorWrite(-someFlag * motor_output);*/
-                        // // motor_output = 60;
-                        // // motor_output  = abs(constrain(motor_output, -200, 200));
-                        // // motor.Rev(motor_output);
-                        // // Serial.print("\nRev");
-                        // // Serial.print(motor_output);
-                        // // }
+                        // else {
+                        // if (motor_state < 0){
+                        // // motor.Rev(motor_state -= 20);
+                        // }
+                        // else{
+                        // motor.Fwd(motor_state -= 20);
+                        // }
+                        // }
+                    }
 
-                        // // else {
-                        // // if (motor_state < 0){
-                        // // // motor.Rev(motor_state -= 20);
-                        // // }
-                        // // else{
-                        // // motor.Fwd(motor_state -= 20);
-                        // // }
-                        // // }
-                    // }
-
-                    // else if ((theta1 < 2-1)) {
-                        // // if (theta1dot > 0.1) { // going toward
-                        // // motor_output  = abs(constrain(motor_output, -200, 200));
-                        // // motor.Rev(motor_output);
-                        // // /*motorCCW(abs(motor_output));*/
-                        // // Serial.print("\nRev");
-                        // // Serial.print(motor_output);
-
-                        // // }
-
-                        // if (theta1dot < -0.01) { // going away -- fight!!
-                            // motor_output = 20 + (k * abs(theta1) + kdot * abs(theta1dot));
-                            // motor_output  = abs(constrain(motor_output, -200, 200));
-                            // motorWrite(-60);
-                            // // if (theta1dot < 0.1) { // going towrad .. 
-                            // // /*motorWrite(-someFlag * motor_output);*/
-                            // // motor_output = 60;
-                            // // motor_output  = abs(constrain(motor_output, -200, 200));
-                            // // motor.Rev(motor_output);
-                            // // Serial.print("\nRev");
-                            // // Serial.print(motor_output);
-                            // // }
-
-                            // // else {
-                            // // if (motor_state < 0){
-                            // // // motor.Rev(motor_state -= 20);
-                            // // }
-                            // // else{
-                            // // motor.Fwd(motor_state -= 20);
-                            // // }
-                            // // }
-                        // }                        
+                    else if ((theta1 < 2-1)) {
+                        // if (theta1dot > 0.1) { // going toward
+                        // motor_output  = abs(constrain(motor_output, -200, 200));
+                        // motor.Rev(motor_output);
+                        // /*motorCCW(abs(motor_output));*/
                         // Serial.print("\nRev");
                         // Serial.print(motor_output);
 
-                        // /*motorWrite(someFlag * motor_output);*/
-                        // /*motorCW(abs(motor_output));*/
-                    // }
+                        // }
 
-                    // // else {
-                    // // if (motor_state < 0){
-                    // // motor.Rev(motor_state -= 20);
-                    // // }
-                    // // else{
-                    // // // motor.Fwd(motor_state -= 20);
-                    // // }
-                    // // }
-                // }
-            // }
-        // }
-        // else if (EStopFlag) {
-        // motor.Stop();
-        // }
+                        if (theta1dot < -0.01) { // going away -- fight!!
+                            motor_output = 20 + (k * abs(theta1) + kdot * abs(theta1dot));
+                            motor_output  = abs(constrain(motor_output, -200, 200));
+                            motorWrite(-60);
+                            // if (theta1dot < 0.1) { // going towrad .. 
+                            // /*motorWrite(-someFlag * motor_output);*/
+                            // motor_output = 60;
+                            // motor_output  = abs(constrain(motor_output, -200, 200));
+                            // motor.Rev(motor_output);
+                            // Serial.print("\nRev");
+                            // Serial.print(motor_output);
+                            // }
+
+                            // else {
+                            // if (motor_state < 0){
+                            // // motor.Rev(motor_state -= 20);
+                            // }
+                            // else{
+                            // motor.Fwd(motor_state -= 20);
+                            // }
+                            // }
+                        }                        
+                        Serial.print("\nRev");
+                        Serial.print(motor_output);
+
+                        /*motorWrite(someFlag * motor_output);*/
+                        /*motorCW(abs(motor_output));*/
+                    }
+
+                    // else {
+                    // if (motor_state < 0){
+                    // motor.Rev(motor_state -= 20);
+                    // }
+                    // else{
+                    // // motor.Fwd(motor_state -= 20);
+                    // }
+                    // }
+                }
+            }
+        }
+        else if (EStopFlag) {
+            Serial.println("Moto stopped");
+            // motor.Stop();
+        }
 
             // SANITY CHECK
-            // /*
-               // motor.Rev(200);
-               // delay(500);
-               // motor.Fwd(200);
-               // delay(500);
-               // motor.Stop();
-               // delay(500);
-             // */
-        }
+            /*
+               motor.Rev(200);
+               delay(500);
+               motor.Fwd(200);
+               delay(500);
+               motor.Stop();
+               delay(500);
+             */
 
         digitalWrite(ledPin, ledState);
         lastButtonState = reading;
