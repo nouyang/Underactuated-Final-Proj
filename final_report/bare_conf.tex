@@ -20,7 +20,7 @@
 %% Legal Notice:
 %% This code is offered as-is without any warranty either expressed or
 %% implied; without even the implied warranty of MERCHANTABILITY or
-%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% FITNESS FOR A PARTICULAR PURPOSE!
 %% User assumes all risk.
 %% In no event shall the IEEE or any contributor to this code be liable for
 %% any damages or losses, including, but not limited to, incidental,
@@ -135,7 +135,7 @@
 % graphicx was written by David Carlisle and Sebastian Rahtz. It is
 % required if you want graphics, photos, etc. graphicx.sty is already
 % installed on most LaTeX systems. The latest version and documentation
-% can be obtained at: 
+% can be obtained at:
 % http://www.ctan.org/pkg/graphicx
 % Another good source of documentation is "Using Imported Graphics in
 % LaTeX2e" by Keith Reckdahl which can be found at:
@@ -341,10 +341,10 @@ Email: nouyang@g.harvard.edu}
 
 % for over three affiliations, or if they all won't fit within the width
 % of the page, use this alternative format:
-% 
+%
 %\author{\IEEEauthorblockN{Michael Shell\IEEEauthorrefmark{1},
 %Homer Simpson\IEEEauthorrefmark{2},
-%James Kirk\IEEEauthorrefmark{3}, 
+%James Kirk\IEEEauthorrefmark{3},
 %Montgomery Scott\IEEEauthorrefmark{3} and
 %Eldon Tyrell\IEEEauthorrefmark{4}}
 %\IEEEauthorblockA{\IEEEauthorrefmark{1}School of Electrical and Computer Engineering\\
@@ -392,7 +392,7 @@ We explore the classic nonlinear controls problem, inverting a pendulum, using a
 % no \IEEEPARstart
 Pendulum is inherently unstable around upright fixed point.
 
-Example write-up: 
+Example write-up:
 % http://web.mit.edu/sjlevine/www/project_data/bicycle-planning/sjlevine_final_report.pdf
 % ttps://en.wikipedia.org/wiki/Nonlinear_system
 
@@ -404,23 +404,17 @@ IEEEtran.cls version 1.8b and later.
 I wish you the best of success.
 
 \hfill mds
- 
+
 \hfill August 26, 2015
 
-\subsection{Todo}
-Control authority analysis -- max torque output as function of motor and flywheel (torque constraints)
-Compare to mglsin theta -- what is the maximum deviation angle we can recover from
+%\subsection{Todo}
+%Control authority analysis -- max torque output as function of motor and flywheel (torque constraints)
+%Compare to mglsin theta -- what is the maximum deviation angle we can recover from
 
 
+\section{LQR Analysis}
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
-
-\section{Analyses}
-
-\subsection{LQR}
-
-\subsubsection{Equations of Motion}
+\subsection{Equations of Motion}
 
 To derive the equations of motion (EOM), we use the Lagrangian method. Let $L$
 equal to the kinetic energy plus the potential energy of the system.
@@ -430,11 +424,11 @@ equal to the kinetic energy plus the potential energy of the system.
     L = KE - PE
 \end{align}
 
-By Lagrange's method, 
+By Lagrange's method,
 
 \begin{align}
     \frac{d}{dt} (\frac{\partial{L}}{\partial \dot{q}_i}) -
-    \frac{\partial{L}}{\partial q_i}  &= \sum_{i=0}^{n} F_i   
+    \frac{\partial{L}}{\partial q_i}  &= \sum_{i=0}^{n} F_i
 \end{align}
 
 for $i = 1,2,3 ... n $ forces.
@@ -443,11 +437,118 @@ Thus, we need to write out the KE, the PE, the derivative of L with respective
 to each state $q$, the derivative of L with respect to the (time) derivative of
 each state $q$, and then the time derivative of that last term.
 
-Let us begin..
+Let us first consider the unaltered case, from the problem set, where here we
+will derive the equations of motion by hand but otherwise simply explain the
+derivation in detail. Later, we will consider a system that more closely matches
+our real-life system. We will not be able to compare the model with reality,
+since we were unable to implement the full state measurement so LQR cannot
+apply. Instead, we show another example as applied to a modified system where
+the reaction wheel pendulum is put on an (unpowered) cart.
 
-conservation of energy, we can conclude that for a closed system,
 
-Defining our origin as the pivot point, 
+1) Write the KE of the system. We can decompose this into the translational and
+rotational components.
+
+Let us consider (abstractly) the translational KE of a point mass $m$ rotating
+around the origin on a massless string of length $l$. $\theta$ is defined as
+angle from the downward vertical point, increasing counterclockwise  (diagram not provided).
+The position of the point mass is $x = l cos \theta$ and $y = l sin \theta$.
+KE is $\frac{1}{2} m \cdot q^2$, where q is the position.
+
+% http://underactuated.csail.mit.edu/underactuated.html?chapter=multibody
+\begin{align}
+    KE_x &= 0.5 m (l \cdot \frac{d}{dt} \sin \theta)^2 = \frac{1}{2} m (l \dot\theta \cos \theta)^2 \\
+    KE_y &= 0.5 m (l \cdot \frac{d}{dt} \cos \theta)^2  = \frac{1}{2} m (- l \dot\theta \sin\theta)^2 \\
+    KE &= KE_x + KE_y = \frac{1}{2} m l^2 \dot \theta^2 (\cos^2 \theta + \sin^2 \theta) \\
+       &= \frac{1}{2} m l^2 \dot\theta^2 \\
+\end{align}
+
+where on the last step we used the trig identity $\cos^2 + sin^2 = 1$.
+
+Now applying this to the stick and flywheel components of our system, we
+calculate 1) the stick around the origin 2) the flywheel around the origin. Note
+that the KE of the stick acts at $l_1$, the center-of-mass of the stick, not
+$l_2$.
+
+\begin{align}
+    KE_{\text{translational}} &= \frac{1}{2} m_1 (l_1 \dot\theta_1)^2 + \frac{1}{2} m_2 (l_2 \dot\theta_1)^2\\
+\end{align}
+
+Additionally we have the inertial component of KE since we have angular
+velocities here and our stick has mass and our previous point mass is instead a rotating
+flywheel. The general formula is $KE = \frac{1}{2} I_2 \dot\theta^2$.
+Noting that angular velocities "add", and applying this to each component of our
+system; we calculate 1) inertial KE of the stick 2) inertial KE of the flywheel.
+
+\begin{align}
+    KE_{\text{inertial}} &= \frac{1}{2} m_1 (I_1 \dot\theta_1)^2 + \frac{1}{2}
+    m_2 (I_2 (\dot\theta_1 + \dot\theta_2))^2\\
+\end{align}
+
+The total KE of the system is the sum of the above.
+
+2) The potential energy (PE) of the system is more straightforward. Gravitationally
+speaking, (and with a bit of geometry - note that our theta is defined from
+vertical and increasing counterclockwise)
+
+\begin{align}
+    PE &= m_1 g (1 - l_1 \cos\theta_1) + m_2 g (1 - l_2 \cos\theta_1)
+\end{align}
+
+3) Now we have the lagrangian $L = KE - PE$ and must take the partial of the lagrangian with
+respect to each state variable, in our case $\theta_1$ and $\theta_2$.
+
+Using sympy, we calculate
+\begin{align}
+    \frac{\partial L}{\partial q_i} =  BLAH
+\end{align}
+
+4) We also calculate the
+\begin{align}
+    \frac{\partial L}{\partial \dot q_i} =  BLAH
+\end{align}
+
+5) Finally, we calculate the time derivative of the last term
+\begin{align}
+    \frac{d}{dt} \frac{\partial L}{\partial \dot q_i} =  BLAH
+\end{align}
+
+6) Subtracting, we set the equation equal to our input torque.
+
+TODO %TODO.
+
+This gives us our final manipulator equations.
+
+%\subsubsection{Motor vs Gravity}
+
+%Tangentially, ideally our output torque is enough to fight gravity and
+%essentially "hold" the pendulum floating in space at any angle, and the maximum
+%torque is at horizontal ( $\theta_1 = \pi/2$ ).
+
+%\begin{align}
+    %\tau_{motor, max} &= 270 \; \text{Nm} \\
+%\tau_{gravity, max} &= m g l sin\theta \\
+%\tau_{gravity, max} &= m_{system} \cdot 9.8 \cdot 0.021 \cdot sin(\pi/2)\\
+%\tau_{gravity, max} &= (.546 + .45 + .115/2 ) \cdot 9.8 \cdot 0.021 \cdot 1\\
+%\tau_{gravity, max} &\approx .21 \; \text{Nm}
+%\end{align}
+
+%Where for back-of-envelope purposes we're approximating torque contribution of
+%the stick.
+
+%Here we easily see that our output torque does not approach this. A more
+%useful analysis is to observe whether
+%conservation of energy, we can conclude that for a closed system,
+
+\subsection{Find the Fixed Points}
+
+To find the fixed points of the system, we calculate $\dotq s.t. f(\dotq) = 0$
+
+\subsection{Linearization Around Fixed Point}
+
+We can further use sympy to linearize our fixed points.
+
+
 
 \begin{figure}[!t]
     \centering
@@ -456,18 +557,49 @@ Defining our origin as the pivot point,
     \label{}
 \end{figure}
 
+\subsection{Constants}
 
-\subsubsection{Linearization}
+\begin{table}[!t]
+    \renewcommand{\arraystretch}{1.5}
+    \caption{System Constants}
+    \label{table_example}
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Property & Measurement \\
+        \hline
+        $m_{stick} = m_1$ & 115 g \\
+        $m_{flywheel}$ & 546 g\\
+        $m_{motor}$ & 450 g \\ % TODO: estimated
+        $l_{stick} = l_2$ & 21 cm \\
+        $r_{flywheel}$ & 8.5 cm \\ % TODO: estimated
+        \hline
+    \end{tabular}
+\end{table}
 
 
-\subsection{LQR on "System on Wheels"}
+\subsection{K values}
 
-For a brief detour (in order to demonstrate something other than just the pset)
+\subsection{Region of Attraction via Lyapunov}
+
+\subsection{Energy-based Controller for Swingup}
+
+\section{LQR for "System on Wheels"}
+
+For a detour (in order to demonstrate understanding of the problem set material)
 we imagine sticking the whole thing on wheels and redo the same analysis,
 although for sanity we run the calculations through sympy instead of by hand.
 
 
-\subsubsection{Controllability}
+\subsection{Controllability}
+
+We begin by analyzing the controllability of the system.
+
+
+
+%RS-550S-18V
+%https://www.harborfreight.com/18-volt-cordless-38-drilldriver-with-keyless-chuck-68239.html
+%https://grabcad.com/library/rs-550s-18v-harbor-freight-900rpm-18v-cordless-drill-motor-and-gearbox-1#!
 
 
 \subsubsection{Equations of Motion}
@@ -489,7 +621,7 @@ although for sanity we run the calculations through sympy instead of by hand.
 %\begin{figure}[!t]
 %\centering
 %\includegraphics[width=2.5in]{myfigure}
-% where an .eps filename suffix will be assumed under latex, 
+% where an .eps filename suffix will be assumed under latex,
 % and a .pdf suffix will be assumed for pdflatex; or what has been declared
 % via \DeclareGraphicsExtensions.
 %\caption{Simulation results for the network.}
@@ -505,7 +637,7 @@ although for sanity we run the calculations through sympy instead of by hand.
 % The subfigure \label commands are set within each subfloat command,
 % and the \label for the overall figure must come after \caption.
 % \hfil is used as a separator to get equal spacing.
-% Watch out that the combined width of all the subfigures on a 
+% Watch out that the combined width of all the subfigures on a
 % line do not exceed the text width or a line break will occur.
 %
 %\begin{figure*}[!t]
@@ -562,7 +694,7 @@ although for sanity we run the calculations through sympy instead of by hand.
 % in-text middle ("here") positioning is typically not used, but it
 % is allowed and encouraged for Computer Society conferences (but
 % not Computer Society journals). Most IEEE journals/conferences use
-% top floats exclusively. 
+% top floats exclusively.
 % Note that, LaTeX2e, unlike IEEE journals/conferences, places
 % footnotes above bottom floats. This can be corrected via the
 % \fnbelowfloat command of the stfloats package.
@@ -624,5 +756,3 @@ H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
 
 % that's all folks
 \end{document}
-
-
