@@ -392,7 +392,7 @@ We explore the classic nonlinear controls problem, inverting a pendulum, using a
 Pendulum is inherently unstable around upright fixed point.
 
 
-Example write-up:
+%Example write-up:
 % http://web.mit.edu/sjlevine/www/project_data/bicycle-planning/sjlevine_final_report.pdf
 % ttps://en.wikipedia.org/wiki/Nonlinear_system
 
@@ -567,7 +567,7 @@ Doing so, we then get as given to us in the homework
         \ddot \theta_2
     \end{bmatrix}
     + 0
-    &= \\
+    &= \nonumber \\
     \begin{bmatrix}
         - (m_1 l_1 + m_2 l_2) g \sin\theta_1 \\
         0
@@ -626,9 +626,64 @@ For the downward case, we can similarly use the approximation
 % TODO: push sympy code
 After plugging in to sympy, we get the same result as in the homework,
 
+\begin{align}
+    \begin{bmatrix}
+        \dot\theta_1 \\
+        \dot\theta_2 \\
+        \ddot\theta_1 \\
+        \ddot\theta_2
+    \end{bmatrix}
+    =&
+    \begin{bmatrix}
+        0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 1 \\
+        \frac{(m_1 l_1 + m_2 l_2) g}{(m_1 l_1^2 + m_2 l_2^2 + I_1)} & 0 & 0 & 0 \\
+        - \frac{(m_1 l_1 + m_2 l_2) g}{(m_1 l_1^2 + m_2 l_2^2 + I_1)}  & 0 & 0 & 0
+    \end{bmatrix}
+    \begin{bmatrix}
+        \theta_1 - 180 \\
+        \theta_2 \\
+        \dot{\theta_1} \\
+        \dot{\theta_2}
+    \end{bmatrix} \nonumber \\
+    &+
+    \begin{bmatrix}
+        0 \\
+        0 \\
+        \frac{-1}{(m_1 l_1^2 + m_2 l_2^2 + I_1)} \\
+        \frac{1}{I_2} + \frac{1}{(m_1 l_1^2 + m_2 l_2^2 + I_1)}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \tau \\
+    \end{bmatrix}
+\end{align}
 
+\subsubsection{A and B}
 
+If we plug in the measurements from our physical system as in
+\cref{tbl:systemparameters}, we get the following A and B matrices (rounded).
 
+\begin{align}
+    A &= 
+    \begin{bmatrix}
+        0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 1 \\
+        312 & 0 & 0 & 0 \\
+        -312  & 0 & 0 & 0
+    \end{bmatrix} \\
+    B &=  
+    \begin{bmatrix}
+        0 \\
+        0 \\
+        -1395\\
+        1901
+    \end{bmatrix}
+\end{align}
+%originally A is  5 -5. and B is -0.1 11
+
+Note: We treat the stick mass as negligible compared the motor, which is
+modelled as a point mass at distance $l_2$; thus we set $l_1$ equal to $l_2$,
+and $m_1$ = $m_{motor}$.
 
 \begin{figure}[!t]
     \centering
@@ -642,7 +697,7 @@ After plugging in to sympy, we get the same result as in the homework,
 \begin{table}[!t]
     \renewcommand{\arraystretch}{1.5}
     \caption{System Constants}
-    \label{table_example}
+    \label{tbl:systemparameters}
     \centering
     \begin{tabular}{|c|c|}
         \hline
@@ -661,28 +716,43 @@ After plugging in to sympy, we get the same result as in the homework,
 
 Now we simply supply a cost function. We care a lot about the $\theta_1$, some about
 the $\dot\theta_1$, a bit about $\dot\theta_2$, and not at all about $\theta_2$.
+We also put a cost on the input using $\textbf{R}$(here we closely follow the
+assignment, since it turns out we will not be able to apply LQR to our physical
+system).
 
+
+%% ---------------------------------------------------------------------------
+%% ---------------------------------------------------------------------------
+%% TODO ! change the inertia matrix and redo these numbers
+%% ---------------------------------------------------------------------------
+%% ---------------------------------------------------------------------------
 \begin{align}
     Q &=
     \begin{bmatrix}
-        x_{11}       & 0 & 0 & 0 \\
-        0 & x_{22} & 0 & 0 \\
-        0 & 0 & x_{22} & 0 \\
-        0 & 0 & 0 & x_{22}
-    \end{bmatrix}, R = \begin{bmatrix} x_{11}  \end{bmatrix}
+        10 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 \\
+        0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0.1
+    \end{bmatrix}\\
+    R &= \begin{bmatrix} 0.1 \end{bmatrix}
 \end{align}
 
-Now, we take Plugging into the linearization function in Drake, we get the K values of
+Using the LQR function built into Drake, we get (rounded)
 
 \begin{align}
+    K &=
     \begin{bmatrix}
-        A =
+        -35 & 0 & -5 & -1 \\
+    \end{bmatrix}\\
+    S &=
+    \begin{bmatrix}
+        12 & 0 & 1  & 0. \\
+        0 & 0 & 0 & 0 \\
+        1 & 0 & 0. & 0. \\
+        0. & 0 & 3 & 0.
     \end{bmatrix}
 \end{align}
 
-Note: We treat the stick mass as negligible compared the motor, which is
-modelled as a point mass at distance $l_2$; thus we set $l_1$ equal to $l_2$,
-and $m_1$ = $m_{motor}$.
 
 \subsection{Region of Attraction via Lyapunov}
 
