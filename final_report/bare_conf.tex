@@ -498,7 +498,8 @@ vertical and increasing counterclockwise)
 3) Now we have the Lagrangian $L = KE - PE$ and must take the partial of the Lagrangian with
 respect to each state variable, in our case $\theta_1$ and $\theta_2$.
 
-Using sympy, we calculate
+Using sympy (note: we left the sympy ordering intact, so the terms are a
+bit weird), we calculate
 \begin{align}
     \frac{\partial L}{\partial q} &=
     \begin{bmatrix}
@@ -508,7 +509,7 @@ Using sympy, we calculate
     \label{eq:partialq}
 \end{align}
 
-4) We also calculate the
+4) As an intermediate step, we calculate the
 \begin{align}
     \frac{\partial L}{\partial \dot q} &=
     \begin{bmatrix}
@@ -519,12 +520,12 @@ Using sympy, we calculate
     \label{eq:partialqdot}
 \end{align}
 
-5) Finally, we calculate the time derivative of the last term
+5) Finally, we calculate the time derivative of the previous term
 \begin{align}
     \frac{d}{dt} \frac{\partial L}{\partial \dot q_i} &=
     \begin{bmatrix}
     I_2 \ddot\theta_2 + \ddot\theta_1 ( I_1 +  I_2 +  m_1 l_1^2 + m_2 l_2^2) \\
-    I_2 \ddot\theta_1 + \ddot\theta_2
+    I_2 \ddot\theta_1 + I_2 \ddot\theta_2
     \end{bmatrix}
     \label{eq:ddt}
 \end{align}
@@ -540,7 +541,7 @@ We may then directly ask sympy to solve for $\ddot q$
         {I_1 + m_1 l_1^2 + m_2 l_2^2}
 \end{align}
 
-Alternatively, we can more neatly go directly from \cref{eq:ddt} and
+More neatly, we can go directly from \cref{eq:ddt} and
 \cref{eq:partialq} to the "manipulator equations" as per the class textbook.
 Specifically, we put \cref{eq:ddt} on the left hand side, factoring out
 $\ddot \theta_1$ and $\ddot \theta_2$; then on the right hand side we put
@@ -550,7 +551,7 @@ adding in our input torque $\tau$.
 That is, we rewrite in form
 
 \begin{equation}
-\bm{M(q) \ddot q + C (q, \dot q) &= \tau_g (q) + B u}
+\bm{M(q) \ddot q + C (q, \dot q) \dot q = \tau_g (q) + B u}
 \end{equation}
 
 Doing so, we then get as given to us in the homework
@@ -578,7 +579,6 @@ Doing so, we then get as given to us in the homework
      \end{bmatrix}
      \tau
 \end{align}
-
 
 
 %\subsubsection{Motor vs Gravity}
@@ -610,7 +610,19 @@ To find the fixed points of the system, we calculate $\dot q s.t. f(\dot q) = 0$
 
 We can further use sympy to linearize our fixed points.
 
+Focusing on the upright case,
 
+\begin{align}
+    \sin\theta \approx \pi - \theta \text{ for } \theta \approx \pi
+\end{align}
+
+For the downward case, we can similarly use the approximation
+
+\begin{align}
+    \sin\theta \approx \theta \text{ for } \theta \approx 0
+\end{align}
+
+% https://en.wikipedia.org/wiki/Nonlinear_system#Pendula
 
 \begin{figure}[!t]
     \centering
