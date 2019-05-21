@@ -524,14 +524,17 @@ Using sympy, we calculate
     \end{bmatrix}
 \end{align}
 
-6) Subtracting, we set the equation equal to our input torque $\tau$.
+6) We set the equation equal, on the right hand side, to our input torque $\tau$.
 
 This gives us our final equations of motion.
+
 \begin{align}
-    \dot\theta_1 &= (I_2 \tau + g l_1 (I_2 + 4.0 l_1^2 m_2) (m_1 + 2.0 m_2)
-    \sin(\theta_1))/(I_2^2 - (I_2 + 4.0 l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1)) \\
-    \dot\theta_2 &= -(I_2 g l_1 (m_1 + 2.0 m_2) \sin(\theta_1) + \\
-    \tau (I_1 + I_2 + l_1^2 m_1))/(I_2^2 - (I_2 + 4.0 l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1))
+    \ddot \theta_1 &= \frac{ g l_1 (I_2 4 \cdot l_1^2 m_2) (m_1 + 2 \cdot m_2) sin(\theta_1)}
+    {( I_2^2 - (I_2 + 4 \cdot l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1)}
+    %\ddot\theta_1 &= \frac{ (I_2 \tau + g l_1 (I_2 + 4 \cdot l_1^2 m_2) (m_1 + 2 \cdot m_2) \sin(\theta_1))}
+    %{(I_2^2 - (I_2 + 4 \cdot l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1))} \\
+    %\ddot\theta_2 &= \frac{ -(I_2 g l_1 (m_1 + 2 \cdot m_2) \sin(\theta_1) + \tau (I_1 + I_2 + l_1^2 m_1) }
+        %{(I_2^2 - (I_2 + 4 \cdot l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1))}
 \end{align}
 
 
