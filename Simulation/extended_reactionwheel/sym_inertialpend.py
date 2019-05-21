@@ -58,7 +58,7 @@ qddot = Matrix([t1ddot, t2ddot]) # time derivative of qdot
 
 
 K_translat = Matrix([0.5 * m1 * (l1 * t1dot)**2 + \
-    0.5 * m2 * (l2 * t2dot)**2])
+    0.5 * m2 * (l2 * t1dot)**2])
 # K_inertial = 0.5 * Matrix([m1 * (l1 * t1dot)**2, 
                            # m2 * (l2 * t2dot)**2])
 
