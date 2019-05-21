@@ -51,6 +51,7 @@
 
 
 \documentclass[conference]{IEEEtran}
+%\documentclass[conference]{IEEEconf_allowlinks}
 % Some Computer Society conferences also require the compsoc mode option,
 % but others use the standard conference format.
 %
@@ -106,8 +107,7 @@
 % The latest version can be obtained at:
 % http://www.ctan.org/pkg/cite
 % The documentation is contained in the cite.sty file itself.
-
-
+\usepackage{hyperref}
 
 
 
@@ -170,9 +170,7 @@
 % version and documentation can be obtained at:
 % http://www.ctan.org/pkg/amsmath
 
-
-
-
+\usepackage[capitalise]{cleveref}
 
 % *** SPECIALIZED LIST PACKAGES ***
 %
@@ -193,7 +191,7 @@
 
 
 
-
+\usepackage{wrapfig,lipsum,booktabs} % PRETTIER TABLES
 % *** ALIGNMENT PACKAGES ***
 %
 \usepackage{array}
@@ -585,12 +583,12 @@ Now we simply supply a cost function. We care a lot about the $\theta_1$, some a
 the $\dot\theta_1$, a bit about $\dot\theta_2$, and not at all about $\theta_2$.
 
 \begin{align}
-    Q &= 
+    Q &=
     \begin{bmatrix}
         x_{11}       & 0 & 0 & 0 \\
         0 & x_{22} & 0 & 0 \\
         0 & 0 & x_{22} & 0 \\
-        0 & 0 & 0 & x_{22} 
+        0 & 0 & 0 & x_{22}
     \end{bmatrix}, R = \begin{bmatrix} x_{11}  \end{bmatrix}
 \end{align}
 
@@ -604,9 +602,11 @@ Plugging into the LQR function in Drake, we get the K values of :
 
 \section{LQR for "System on Wheels"}
 
+
 For a detour (in order to demonstrate understanding of the problem set material)
 we imagine sticking the whole thing on wheels and redo the same analysis,
 although for sanity we run the calculations through sympy instead of by hand.
+\cite{JS-aruco}
 
 
 \subsection{Controllability}
@@ -617,7 +617,7 @@ control inputs (we can still only control the flywheel directly). We might
 expect that we can still stabilize the system, but cannot control the cart
 position while keeping the pendulum upright (at least with LQR feedback).
 
-To check our intuition, we check the rank of the controllability matrix, defined as 
+To check our intuition, we check the rank of the controllability matrix, defined as
 
 
 
@@ -772,7 +772,8 @@ The authors would like to thank...
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
+
+%\begin{thebibliography}{1}
 
 %\bibitem{IEEEhowto:kopka}
 %H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
@@ -797,13 +798,13 @@ The authors would like to thank...
 \section*{APPENDIX}
     \subsection{Bill of Materials}
 
-    A list of the components of the sensor is found in \cref{tbl:bom}. %\begin{tabular}{@{}p{0.3\linewidth}p{0.48\linewidth}p{0.12\linewidth}@{}}
+    A list of the components of the sensor is found in \ref{tbl:bom}. %\begin{tabular}{@{}p{0.3\linewidth}p{0.48\linewidth}p{0.12\linewidth}@{}}
     %${@{}lll@{}}
     \begin{table}[h]
         \caption{List of components and approximate costs}
         \label{tbl:bom}
         \begin{center}
-            \resizebox{0.49\textwidth}{!}{%
+            \resizebox{0.43\textwidth}{!}{%
                 \begin{tabular}{lll}
                     \toprule
                     Part          & Details   & Cost  \\ \midrule
