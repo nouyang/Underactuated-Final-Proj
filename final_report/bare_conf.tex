@@ -396,23 +396,60 @@ Pendulum is inherently unstable around upright fixed point.
 % http://web.mit.edu/sjlevine/www/project_data/bicycle-planning/sjlevine_final_report.pdf
 % ttps://en.wikipedia.org/wiki/Nonlinear_system
 
-This demo file is intended to serve as a ``starter file''
-for IEEE conference papers produced under \LaTeX\ using
-IEEEtran.cls version 1.8b and later.
-% You must have at least 2 lines in the paragraph with the drop letter
-% (should never be an issue)
-I wish you the best of success.
-
 \hfill mds
 
-\hfill August 26, 2015
+\hfill May 22, 2019
 
 %\subsection{Todo}
 %Control authority analysis -- max torque output as function of motor and flywheel (torque constraints)
 %Compare to mglsin theta -- what is the maximum deviation angle we can recover from
 
+\section{Hardware Methods}
 
-\section{LQR Analysis}
+First, motor with encoder, and small flywheel.
+Insert picture of the three iterations.
+
+(Final motor was a drill motor, available for ~\$25 at harbor freight)
+
+\subsection{Theory to Reality}
+
+Below, we will explain the LQR theory. However, in reality we relied on PD
+control. The reasons for this are:
+
+\begin{itemize}
+    \item Limited torque output
+    \itme Lack of motor encoder
+    \itme Lack of current control -- our software controller outputs torque, but
+    we do not command torque directly, and needed to write an inner PID loop  (I
+    can fill this in)
+\end{itemize}
+
+
+\textbf{To calculate the state variables}, 
+We have discrete digital values from the quadrature encoder on the shaft, which
+was a high quality one (1025 counts).
+
+We furthermore use a naive method to estimate angular velocities from the
+encoder counts: measure time elapsed and the change in angle, divide, set as our
+thetadot.
+
+(Non constant time frame)
+
+\subsection{Swingup with Bang-Bang Control}
+
+\subsection{Inversion with PD Control}
+
+We used a simple control with two k values: one for theta, and one for thetadot.
+This is equivalent to a PD controller.
+
+\subsection{Results}
+
+Insert a table here! Our excellent results.
+
+And link to the videos.
+
+
+\section{Simulation Analysis}
 
 \subsection{Equations of Motion}
 
@@ -886,12 +923,37 @@ To check our intuition, we check the rank of the controllability matrix, defined
 % \fnbelowfloat command of the stfloats package.
 
 
+\section{Discussion}
+
+\subsection{Discussion}
+
+1) estimate motor velocity: if we wanted to, we could do it from current
+
+It does seem from online that it's possible to stabilize with this estimate
+(link to youtube video)
+
+2) rebuild with less torque limited (maybe try this analysis again? I didn't get
+it to work above -- skip if running out of time)
 
 
-\section{Conclusion}
-The conclusion goes here.
 
 
+\subsection{Mechanical Lessons Learned}
+
+Pressfits are great! They’re used for… everything.
+Decisiveness is good – we weren’t certain about going for the better motor, which instinctually thought it’d be needed but went for it and glad we did.
+Glad we gave some consideration to clearance – bigger motor and flwheel barely fit (scrapes the staples).
+Maybe would go back to 3d printed version
+Current control
+
+
+\section{Future Work and Conclusion}
+
+We got it to invert!
+In the future, LQR ... :'( 
+But for simple systems like this inverted pendulum (and not humanoids) PD is
+plenty, don't need LQR really.
+And then... stick it on wheels!
 
 
 % conference papers do not normally have an appendix
