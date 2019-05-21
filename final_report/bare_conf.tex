@@ -445,10 +445,10 @@ apply. Instead, we show another example as applied to a modified system where
 the reaction wheel pendulum is put on an (unpowered) cart.
 
 
-1) Write the KE of the system. We can decompose this into the translational and
+\noindent 1) \textbf{Write the KE of the system}. We can decompose this into the translational and
 rotational components.
 
-Let us consider (abstractly) the translational KE of a point mass $m$ rotating
+First, let us consider (abstractly) the translational KE of a point mass $m$ rotating
 around the origin on a massless string of length $l$. $\theta$ is defined as
 angle from the downward vertical point, increasing counterclockwise  (diagram not provided).
 The position of the point mass is $x = l cos \theta$ and $y = l sin \theta$.
@@ -480,43 +480,60 @@ Noting that angular velocities "add", and applying this to each component of our
 system; we calculate 1) inertial KE of the stick 2) inertial KE of the flywheel.
 
 \begin{align}
-    KE_{\text{inertial}} &= \frac{1}{2} m_1 (I_1 \dot\theta_1)^2 + \frac{1}{2}
-    m_2 (I_2 (\dot\theta_1 + \dot\theta_2))^2\\
+    KE_{\text{inertial}} &= \frac{1}{2} I_1 \dot\theta_1^2 + \frac{1}{2}
+    I_2 (\dot\theta_1 + \dot\theta_2)^2\\
 \end{align}
 
 The total KE of the system is the sum of the above.
 
-2) The potential energy (PE) of the system is more straightforward. Gravitationally
+\noindent 2) \textbf{Write the PE of the system}. This is more straightforward. Gravitationally
 speaking, (and with a bit of geometry - note that our theta is defined from
 vertical and increasing counterclockwise)
 
 \begin{align}
-    PE &= m_1 g (1 - l_1 \cos\theta_1) + m_2 g (1 - l_2 \cos\theta_1)
+    PE &= m_1 g (- l_1 \cos\theta_1) + m_2 g (- l_2 \cos\theta_1)
 \end{align}
 
-3) Now we have the lagrangian $L = KE - PE$ and must take the partial of the lagrangian with
+3) Now we have the Lagrangian $L = KE - PE$ and must take the partial of the Lagrangian with
 respect to each state variable, in our case $\theta_1$ and $\theta_2$.
 
 Using sympy, we calculate
 \begin{align}
-    \frac{\partial L}{\partial q_i} =  BLAH
+    \frac{\partial L}{\partial q} &=
+    \begin{bmatrix}
+        -g l_1 m_1 \sin(\theta_1) - 2 g l_1 m_2 \sin(\theta_1) \\
+        0
+    \end{bmatrix}
 \end{align}
 
 4) We also calculate the
 \begin{align}
-    \frac{\partial L}{\partial \dot q_i} =  BLAH
+    \frac{\partial L}{\partial \dot q} &=
+    \begin{bmatrix}
+        I_1 \dot\theta_1 + I_2 (\dot\theta_1 + \dot\theta_2) +  l_1^2 m_1 \dot\theta_1 \\
+        \frac{1}{2} I_2 (2 \dot\theta_1 + 2 \dot\theta_2) + 4 \cdot l_1^2 m_2 \dot\theta_2
+    \end{bmatrix}
 \end{align}
 
 5) Finally, we calculate the time derivative of the last term
 \begin{align}
-    \frac{d}{dt} \frac{\partial L}{\partial \dot q_i} =  BLAH
+    \frac{d}{dt} \frac{\partial L}{\partial \dot q_i} &=
+    \begin{bmatrix}
+    I_2 \ddot\theta_2 + \ddot\theta_1 ( I_1 +  I_2 +  l_1^2 m_1) \\
+    I_2 \ddot\theta_1 + \ddot\theta_2 ( I_2 + 4 \cdot l_1^2 m_2)
+    \end{bmatrix}
 \end{align}
 
-6) Subtracting, we set the equation equal to our input torque.
+6) Subtracting, we set the equation equal to our input torque $\tau$.
 
-TODO %TODO.
+This gives us our final equations of motion.
+\begin{align}
+    \dot\theta_1 &= (I_2 \tau + g l_1 (I_2 + 4.0 l_1^2 m_2) (m_1 + 2.0 m_2)
+    \sin(\theta_1))/(I_2^2 - (I_2 + 4.0 l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1)) \\
+    \dot\theta_2 &= -(I_2 g l_1 (m_1 + 2.0 m_2) \sin(\theta_1) + \\
+    \tau (I_1 + I_2 + l_1^2 m_1))/(I_2^2 - (I_2 + 4.0 l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1))
+\end{align}
 
-This gives us our final manipulator equations.
 
 %\subsubsection{Motor vs Gravity}
 

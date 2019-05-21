@@ -88,31 +88,34 @@ P = Matrix([-1 * m1 * g * (l1 * cos(t1)) + -1 * m2 * g * (l2 * cos(t1))])
 L =  K_translat + K_inertial - P
 
 print(L)
-print('L', L.shape)
-print('q', q.shape)
+print('L shape', L.shape)
+print('q shape', q.shape)
 
 # first term in the Euler-Lagrange equation
 partial_L_by_partial_q = L.jacobian(Matrix([q])).T
-print('dL dq', partial_L_by_partial_q.shape)
 print('dL dq', partial_L_by_partial_q)
+print('dL dq shape', partial_L_by_partial_q.shape)
 
 print('qdot', qdot)
 # inner term of the second part of the Euler-Lagrange equation
 partial_L_by_partial_qdot = L.jacobian(Matrix([qdot]))
-print(partial_L_by_partial_qdot)
-print('dL dqdot', partial_L_by_partial_qdot.shape)
+print('dL qdot', partial_L_by_partial_qdot)
+print('dL dqdot shape', partial_L_by_partial_qdot.shape)
 
 # second term (overall, time derivative) in the Euler-Lagrange equation
 # applies the chain rule
 d_inner_by_dt = partial_L_by_partial_qdot.jacobian(Matrix([q])) * qdot + \
     partial_L_by_partial_qdot.jacobian(Matrix([qdot])) * qddot
 
+print('d_inner_by_dt', d_inner_by_dt)
+print('d_inner_by_dt shape', d_inner_by_dt.shape)
 
 # Euler-Lagrange equation
 lagrange_eq = partial_L_by_partial_q - d_inner_by_dt + Matrix([0, tau])
 
 # solve the lagrange equation for qddot and simplify
 prevTime = time.time()
+
 print('START: ', prevTime)
 print("Calculations take a while...")
 r = sympy.solvers.solve(simplify(lagrange_eq), Matrix([qddot]))
