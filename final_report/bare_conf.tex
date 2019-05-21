@@ -602,15 +602,15 @@ Doing so, we then get as given to us in the homework
 %useful analysis is to observe whether
 %conservation of energy, we can conclude that for a closed system,
 
-\subsection{Find the Fixed Points}
+%\subsection{Find the Fixed Points}
 
-To find the fixed points of the system, we calculate $\dot q s.t. f(\dot q) = 0$
+%To find the fixed points of the system, we calculate $\dot q s.t. f(\dot q) = 0$
 
 \subsection{Linearization Around Fixed Point}
 
 We can further use sympy to linearize our fixed points.
 
-Focusing on the upright case,
+Focusing on the upright case, we can use the approximation
 
 \begin{align}
     \sin\theta \approx \pi - \theta \text{ for } \theta \approx \pi
@@ -623,6 +623,12 @@ For the downward case, we can similarly use the approximation
 \end{align}
 
 % https://en.wikipedia.org/wiki/Nonlinear_system#Pendula
+% TODO: push sympy code
+After plugging in to sympy, we get the same result as in the homework,
+
+
+
+
 
 \begin{figure}[!t]
     \centering
@@ -651,8 +657,7 @@ For the downward case, we can similarly use the approximation
     \end{tabular}
 \end{table}
 
-
-\subsection{K values}
+\subsection{}
 
 Now we simply supply a cost function. We care a lot about the $\theta_1$, some about
 the $\dot\theta_1$, a bit about $\dot\theta_2$, and not at all about $\theta_2$.
@@ -667,7 +672,17 @@ the $\dot\theta_1$, a bit about $\dot\theta_2$, and not at all about $\theta_2$.
     \end{bmatrix}, R = \begin{bmatrix} x_{11}  \end{bmatrix}
 \end{align}
 
-Plugging into the LQR function in Drake, we get the K values of :
+Now, we take Plugging into the linearization function in Drake, we get the K values of
+
+\begin{align}
+    \begin{bmatrix}
+        A =
+    \end{bmatrix}
+\end{align}
+
+Note: We treat the stick mass as negligible compared the motor, which is
+modelled as a point mass at distance $l_2$; thus we set $l_1$ equal to $l_2$,
+and $m_1$ = $m_{motor}$.
 
 \subsection{Region of Attraction via Lyapunov}
 
