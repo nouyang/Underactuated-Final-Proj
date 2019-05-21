@@ -159,6 +159,7 @@
 % *** MATH PACKAGES ***
 %
 \usepackage{amsmath}
+\usepackage{bm} % BOLD
 % A popular package from the American Mathematical Society that provides
 % many useful and powerful commands for dealing with mathematics.
 %
@@ -504,42 +505,80 @@ Using sympy, we calculate
         -g l_1 m_1 \sin(\theta_1) - g l_2 m_2 \sin(\theta_1) \\
         0
     \end{bmatrix}
+    \label{eq:partialq}
 \end{align}
 
 4) We also calculate the
 \begin{align}
     \frac{\partial L}{\partial \dot q} &=
     \begin{bmatrix}
-        I_1 \dot\theta_1 + I_2 (\dot\theta_1 + \dot\theta_2) +  l_1^2 m_1
-        \dot\theta_1 \\
-        I_2 (\dot \theta_1 + \dot \theta_2) + l_2^2 m_2 \dot\theta_2
+        I_1 \dot\theta_1 + I_2 (\dot\theta_1 + \dot\theta_2) +
+            l_1^2 m_1 \dot\theta_1 + l_2^2 m_2 \dot \theta_1 \\
+            I_2 (\dot \theta_1 + \dot\theta_2)
     \end{bmatrix}
+    \label{eq:partialqdot}
 \end{align}
 
 5) Finally, we calculate the time derivative of the last term
 \begin{align}
     \frac{d}{dt} \frac{\partial L}{\partial \dot q_i} &=
     \begin{bmatrix}
-    I_2 \ddot\theta_2 + \ddot\theta_1 ( I_1 +  I_2 +  l_1^2 m_1) \\
-    I_2 \ddot\theta_1 + \ddot\theta_2 ( I_2 + \cdot l_2^2 m_2)
+    I_2 \ddot\theta_2 + \ddot\theta_1 ( I_1 +  I_2 +  m_1 l_1^2 + m_2 l_2^2) \\
+    I_2 \ddot\theta_1 + \ddot\theta_2
     \end{bmatrix}
+    \label{eq:ddt}
 \end{align}
 
 6) We set the equation equal, on the right hand side, to our input torque $\tau$.
 
-This gives us our final equations of motion.
+We may then directly ask sympy to solve for $\ddot q$
 
 \begin{align}
-    \ddot \theta_1 &= \frac {g (I_2  + l_2^2 m_2) (m_1 l_1 +  m_2 l_2)\sin(\theta_1)}
-    {( I_2^2 - (I_2 + l_2^2 m_2) (I_1 + I_2 + l_1^2 m_1)} \\
-    \ddot \theta_2 &= \frac {-g I_2 (m_1 l_2 + m_2 l_2 ) \sin\theta_1}
-    {I_2^2 - (I_2 + m_2 l_2^2) (I_1 + I_2 + m_1 l_1^2}
-    %\ddot \theta_2 &= \frac{
-    %\ddot\theta_1 &= \frac{ (I_2 \tau + g l_1 (I_2 + 4 \cdot l_1^2 m_2) (m_1 + 2 \cdot m_2) \sin(\theta_1))}
-    %{(I_2^2 - (I_2 + 4 \cdot l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1))} \\
-    %\ddot\theta_2 &= \frac{ -(I_2 g l_1 (m_1 + 2 \cdot m_2) \sin(\theta_1) + \tau (I_1 + I_2 + l_1^2 m_1) }
-        %{(I_2^2 - (I_2 + 4 \cdot l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1))}
+    \ddot \theta_1 &= -g \frac{ (m_1 l_1 + m_2 l_2) \sin(\theta_1)}
+        {I_1 + m_1 l_1^2 + m_2 l_2^2} \\
+    \ddot \theta_2 &= g \frac{ (m_1 l_1 + m_2 l_2) \sin(\theta_1) }
+        {I_1 + m_1 l_1^2 + m_2 l_2^2}
 \end{align}
+
+Alternatively, we can more neatly go directly from \cref{eq:ddt} and
+\cref{eq:partialq} to the "manipulator equations" as per the class textbook.
+Specifically, we put \cref{eq:ddt} on the left hand side, factoring out
+$\ddot \theta_1$ and $\ddot \theta_2$; then on the right hand side we put
+\cref{eq:partialq}, factoring out $\dot \theta_1$ and $\dot \theta_2$ as well as
+adding in our input torque $\tau$.
+
+That is, we rewrite in form
+
+\begin{equation}
+\bm{M(q) \ddot q + C (q, \dot q) &= \tau_g (q) + B u}
+\end{equation}
+
+Doing so, we then get as given to us in the homework
+(yay it matches!)
+
+\begin{align}
+    \begin{bmatrix}
+        m_1 l_1 ^2 + m_2 l_2^2 + I_1 + I_2 & I_2 \\
+        I_2 & I_2
+    \end{bmatrix}
+    \begin{bmatrix}
+        \ddot \theta_1 \\
+        \ddot \theta_2
+    \end{bmatrix}
+    + 0
+    &= \\
+    \begin{bmatrix}
+        - (m_1 l_1 + m_2 l_2) g \sin\theta_1 \\
+        0
+    \end{bmatrix}
+     +
+     \begin{bmatrix}
+         0 \\
+         1
+     \end{bmatrix}
+     \tau
+\end{align}
+
 
 
 %\subsubsection{Motor vs Gravity}
