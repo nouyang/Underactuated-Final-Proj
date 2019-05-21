@@ -56,7 +56,6 @@ qddot = Matrix([t1ddot, t2ddot]) # time derivative of qdot
 # K_translat = 0.5 * m1 * v_pend.T * v_pend + \
     # 0.5 * m1 * v_pend.T * v_pend 
 
-l2 = 2 * l1
 
 K_translat = Matrix([0.5 * m1 * (l1 * t1dot)**2 + \
     0.5 * m2 * (l2 * t2dot)**2])
@@ -111,7 +110,7 @@ print('d_inner_by_dt', d_inner_by_dt)
 print('d_inner_by_dt shape', d_inner_by_dt.shape)
 
 # Euler-Lagrange equation
-lagrange_eq = partial_L_by_partial_q - d_inner_by_dt + Matrix([0, tau])
+lagrange_eq = partial_L_by_partial_q - d_inner_by_dt #+ Matrix([0, tau])
 
 # solve the lagrange equation for qddot and simplify
 prevTime = time.time()

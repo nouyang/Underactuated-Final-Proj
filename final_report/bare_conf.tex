@@ -501,7 +501,7 @@ Using sympy, we calculate
 \begin{align}
     \frac{\partial L}{\partial q} &=
     \begin{bmatrix}
-        -g l_1 m_1 \sin(\theta_1) - 2 g l_1 m_2 \sin(\theta_1) \\
+        -g l_1 m_1 \sin(\theta_1) - g l_2 m_2 \sin(\theta_1) \\
         0
     \end{bmatrix}
 \end{align}
@@ -510,8 +510,9 @@ Using sympy, we calculate
 \begin{align}
     \frac{\partial L}{\partial \dot q} &=
     \begin{bmatrix}
-        I_1 \dot\theta_1 + I_2 (\dot\theta_1 + \dot\theta_2) +  l_1^2 m_1 \dot\theta_1 \\
-        \frac{1}{2} I_2 (2 \dot\theta_1 + 2 \dot\theta_2) + 4 \cdot l_1^2 m_2 \dot\theta_2
+        I_1 \dot\theta_1 + I_2 (\dot\theta_1 + \dot\theta_2) +  l_1^2 m_1
+        \dot\theta_1 \\
+        I_2 (\dot \theta_1 + \dot \theta_2) + l_2^2 m_2 \dot\theta_2
     \end{bmatrix}
 \end{align}
 
@@ -520,7 +521,7 @@ Using sympy, we calculate
     \frac{d}{dt} \frac{\partial L}{\partial \dot q_i} &=
     \begin{bmatrix}
     I_2 \ddot\theta_2 + \ddot\theta_1 ( I_1 +  I_2 +  l_1^2 m_1) \\
-    I_2 \ddot\theta_1 + \ddot\theta_2 ( I_2 + 4 \cdot l_1^2 m_2)
+    I_2 \ddot\theta_1 + \ddot\theta_2 ( I_2 + \cdot l_2^2 m_2)
     \end{bmatrix}
 \end{align}
 
@@ -529,8 +530,11 @@ Using sympy, we calculate
 This gives us our final equations of motion.
 
 \begin{align}
-    \ddot \theta_1 &= \frac{ g l_1 (I_2 4 \cdot l_1^2 m_2) (m_1 + 2 \cdot m_2) sin(\theta_1)}
-    {( I_2^2 - (I_2 + 4 \cdot l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1)}
+    \ddot \theta_1 &= \frac {g (I_2  + l_2^2 m_2) (m_1 l_1 +  m_2 l_2)\sin(\theta_1)}
+    {( I_2^2 - (I_2 + l_2^2 m_2) (I_1 + I_2 + l_1^2 m_1)} \\
+    \ddot \theta_2 &= \frac {-g I_2 (m_1 l_2 + m_2 l_2 ) \sin\theta_1}
+    {I_2^2 - (I_2 + m_2 l_2^2) (I_1 + I_2 + m_1 l_1^2}
+    %\ddot \theta_2 &= \frac{
     %\ddot\theta_1 &= \frac{ (I_2 \tau + g l_1 (I_2 + 4 \cdot l_1^2 m_2) (m_1 + 2 \cdot m_2) \sin(\theta_1))}
     %{(I_2^2 - (I_2 + 4 \cdot l_1^2 m_2) (I_1 + I_2 + l_1^2 m_1))} \\
     %\ddot\theta_2 &= \frac{ -(I_2 g l_1 (m_1 + 2 \cdot m_2) \sin(\theta_1) + \tau (I_1 + I_2 + l_1^2 m_1) }
