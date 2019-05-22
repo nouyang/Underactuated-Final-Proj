@@ -812,9 +812,6 @@ $\dot\theta_2$, and not at all about $\theta_2$.  We also put a cost on the
 input using $\textbf{R}$(here we closely follow the
 assignment, since it turns out we will not be able to apply LQR to our physical
 system).
-
-
-%% ---------------------------------------------------------------------------
 %% ---------------------------------------------------------------------------
 %% TODO ! change the inertia matrix and redo these numbers
 %% ---------------------------------------------------------------------------
@@ -858,41 +855,101 @@ Ricatti equation.
 We will briefly cover the region of attraction (RoA) analysis, which is covered
 in the problem set already. For an LQR controller, which uses a linearization of
 underlying nonlinear dynamics, this analysis tells us the region for which the
-linearization is valid (and therefore our LQR control can be used). 
+linearization is valid (where our LQR control can be used). 
 
 Specifically, we will use Lyapunov analysis. Lyapunov analysis is a relaxed
 optimization guarantee -- instead of guaranteeing an controller optimal for all
 states will be found, we instead guarantee a controller will be able to
 accomplish a given state. 
 
-
 With the LQR controller, which operates as a constant matrix times the 
 state error (from the desired fixed point)
 
 \begin{align}
-    u = - K(x_{\text{measured} - x_{\text{fixed point}}
+    u &= - K(x_{\text{measured}} - x_{\text{fixed point}})
 \end{align}
 
-We denot the error as $\bar x = x - x_{fp}$.
-
-For our Lyapunov function, we can use the cost-to-go of the LQR solution 
+We denote the error as $\bar x = x - x_{fp}$. For our Lyapunov function, we can use the cost-to-go of the LQR solution 
 
 \begin{align}
-    V_{\text{cost-to-go} &= 
+    V_{\text{cost-to-go}} &= \bar x^T S \bar x
 \end{align}
 
 % TODO definte lyapunov function
+where $S$ is as return to us by the Drake LQR solver. This S is the solution to
+the Ricatti equation (a randomly fancy name for a first order quadratic
+differential equation); in steady-state, this becomes an algebriac Ricatti
+equation.
 
-
-Of course, in performing this analysis we have picked a particular known
-reasonble Lyapunov function. Other functions are possible, which would given
+Note that in performing this analysis we picked a single known
+reasonble Lyapunov function. Other functions are possible, which would give
 slightly different regions of attraction for the same LQR controller.
 
 % TODO: go more into this?
 
+The value of this function, for a given state, can then be used to bound where
+our linear controls will work. In our controller, we simply check the value of
+$V$ for the state we are in and compare it to this bound. If we are within the
+region of attraction, we use the LQR controller. Otherwise, we use the 
+swing-up controller described in the following section.
+
 \subsection{Energy-based Controller for Swingup}
 
+% http://underactuated.csail.mit.edu/underactuated.html?chapter=acrobot
+The idea behind the energy-based swingup controller is straightforward: we add
+torque in the direction that the magnitude of $\theta_1$ is increasing in. We
+care to increase $\theta_1$. However, we cannot directly control $\theta_1$, but
+instead apply torque to control $\theta_2$. (In jargon, this is called
+"non-collocated input").
+
+For the simple pendulum, we observed 
+
+\begin{align}
+    \dot E &= u \dot \theta
+\end{align}
+
+For our system, we rederive $\dot E$ accounting for the fact that our input is
+now non-collocated.
+
+We actually desire $\dot E$ to be zero, since our $E$ will be at steady-state,
+thus our energy error is directly $\dot E$. We then derive what u must be to
+drive this to zero.
+
+% TODO
+
+In the end, in the actual sytem, a bang-bang controller was sufficient.
+Additionally, as the derivation is already covered in the homework, we will not
+repeat it here.
+
+\subsection{Controllability}
+
+This is again covered in the homework and will not be derived here.
+
+The existence of multiple examples online would show that this system is
+generally theoretically controllable, even given torque limits. 
+
+In our case, we can also more directly consider a quick-and-dirty calcuation:
+what is maximum torque produced by gravity, compared to the maximum torque our
+motor can generate? Additionally, in reality the flywheel will also saturate at
+some max speed of the motor, past which back EMF will limit the speed of the
+flywheel. This strongly impacts the difficulty of controlling our system. 
+
+This analyses is omitted, as the results didn't quite match reality, and likely
+would need to be tailored further for the non-idealities of our physical system.
+
+% TODO
+
 \subsection{Is it Underactuated?}
+
+When talking to friends about this, one of the first questions asked was
+invariable "is that really an underactuated system?" especially since we do not
+care about $\theta_2$.
+
+By the definition in the textbook, 
+    A control system described by equation 1 is underactuated in state (q,q˙) at
+    time t if it is not able to command an arbitrary instantaneous acceleration
+    in q.
+With the particular caveat that the same system could be technically be fully or underactuated at different moments in time.
 
 \section{LQR for "System on Wheels"}
 
@@ -904,15 +961,15 @@ although for sanity we run the calculations through sympy instead of by hand.
 \cite{JS-aruco}
 
 
-\subsection{Controllability}
+%\subsection{Controllability}
 
-We begin by analyzing the controllability of the system. At an intuitive level,
-we see that we've added a state (the x position of the cart) without adding any
-control inputs (we can still only control the flywheel directly). We might
-expect that we can still stabilize the system, but cannot control the cart
-position while keeping the pendulum upright (at least with LQR feedback).
+%We begin by analyzing the controllability of the system. At an intuitive level,
+%we see that we've added a state (the x position of the cart) without adding any
+%control inputs (we can still only control the flywheel directly). We might
+%expect that we can still stabilize the system, but cannot control the cart
+%position while keeping the pendulum upright (at least with LQR feedback).
 
-To check our intuition, we check the rank of the controllability matrix, defined as
+%To check our intuition, we check the rank of the controllability matrix, defined as
 
 
 
@@ -1051,7 +1108,6 @@ But for simple systems like this inverted pendulum (and not humanoids) PD is
 plenty, don't need LQR really.
 And then... stick it on wheels! -- however this version will likely be 3d
 printed...
-
 % use section* for acknowledgment
 \section*{Acknowledgment}
 
