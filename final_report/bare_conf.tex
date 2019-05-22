@@ -458,7 +458,7 @@ control. The reasons for this are:
 \begin{itemize}
     \item Limited torque output
     \item Lack of motor encoder
-\item Lack of current control -- our software controller outputs torque, but
+    \item Lack of current control -- our software controller outputs torque, but
     we do not command torque directly, and needed to write an inner PID loop  (I
     can fill this in)
 \end{itemize}
@@ -1058,7 +1058,9 @@ The authors would like to thank...
 
 \section*{APPENDIX}
 \section{Code for Equations of Motion (flywheel pendulum)}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
 \begin{lstlisting}[language=Python,frame=single]  % Start your code-block
+
 
 import sympy
 from sympy import sin, cos, simplify, Derivative, diff
