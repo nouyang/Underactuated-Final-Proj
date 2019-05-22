@@ -555,10 +555,9 @@ velocities here and our stick has mass and our previous point mass is instead a 
 flywheel. The general formula is $KE = \frac{1}{2} I_2 \dot\theta^2$.
 Noting that angular velocities "add", and applying this to each component of our
 system; we calculate 1) inertial KE of the stick 2) inertial KE of the flywheel.
-
 \begin{align}
     KE_{\text{inertial}} &= \frac{1}{2} I_1 \dot\theta_1^2 + \frac{1}{2}
-    I_2 (\dot\theta_1 + \dot\theta_2)^2\\
+    I_2 (\dot\theta_1 + \dot\theta_2)^2
 \end{align}
 
 The total KE of the system is the sum of the above.
@@ -566,12 +565,11 @@ The total KE of the system is the sum of the above.
 \noindent 2) \textbf{Write the PE of the system}. This is more straightforward. Gravitationally
 speaking, (and with a bit of geometry - note that our theta is defined from
 vertical and increasing counterclockwise)
-
 \begin{align}
     PE &= m_1 g (- l_1 \cos\theta_1) + m_2 g (- l_2 \cos\theta_1)
 \end{align}
 
-3) Now we have the Lagrangian $L = KE - PE$ and must take the partial of the Lagrangian with
+\noindent 3) Now we have the Lagrangian $L = KE - PE$ and must take the partial of the Lagrangian with
 respect to each state variable, in our case $\theta_1$ and $\theta_2$.
 
 Using sympy (note: we left the sympy ordering intact, so the terms are a
@@ -585,7 +583,7 @@ bit weird), we calculate
     \label{eq:partialq}
 \end{align}
 
-4) As an intermediate step, we calculate the
+\noindent 4) As an intermediate step, we calculate the
 \begin{align}
     \frac{\partial L}{\partial \dot q} &=
     \begin{bmatrix}
@@ -596,7 +594,7 @@ bit weird), we calculate
     \label{eq:partialqdot}
 \end{align}
 
-5) Finally, we calculate the time derivative of the previous term
+\noindent 5) Finally, we calculate the time derivative of the previous term
 \begin{align}
     \frac{d}{dt} \frac{\partial L}{\partial \dot q_i} &=
     \begin{bmatrix}
@@ -606,7 +604,7 @@ bit weird), we calculate
     \label{eq:ddt}
 \end{align}
 
-6) We set the equation equal, on the right hand side, to our input torque $\tau$.
+\noindent 6) We set the equation equal, on the right hand side, to our input torque $\tau$.
 
 We may then directly ask sympy to solve for $\ddot q$
 
@@ -700,7 +698,24 @@ For the downward case, we can similarly use the approximation
 
 % https://en.wikipedia.org/wiki/Nonlinear_system#Pendula
 % TODO: push sympy code
-After plugging in to sympy, we get the same result as in the homework,
+After plugging in to sympy, we get 
+
+\begin{lstlisting}[language=Python, frame=single]
+t1ddot= -g*(l1*m1 + l2*m2)*sin(t1)/(I1 + l1**2*m1 + l2**2*m2)
+t2ddot= g*(l1*m1 + l2*m2)*sin(t1)/(I1 + l1**2*m1 + l2**2*m2)
+\end{lstlisting}
+
+Or written in Latex,
+\begin{align}
+    \ddot \theta_1 &= -g \frac{(m_1 l_1 + m_2 l_2) \sin(\theta_1) } 
+    {I_1 + m_1 l_1^2 + m_2 l_2^2)} \\
+    \ddot \theta_2 &= g \frac{(m_1 l_1 + m_2 l_2) \sin(\theta_1) } 
+    {I_1 + m_1 l_1^2 + m_2 l_2^2)}
+\end{align}
+
+
+This can be rewritten to be the same result as in the homework, where we
+substitute in the approximation around $\theta = \pi$
 
 \begin{align}
     \begin{bmatrix}
@@ -788,11 +803,13 @@ and $m_1$ = $m_{motor}$.
     \end{tabular}
 \end{table}
 
-\subsection{}
+\subsection{Applying LQR}
 
-Now we simply supply a cost function. We care a lot about the $\theta_1$, some about
-the $\dot\theta_1$, a bit about $\dot\theta_2$, and not at all about $\theta_2$.
-We also put a cost on the input using $\textbf{R}$(here we closely follow the
+Now that we have $A$ and $B$, the matrices for our linearized dynamics of form
+$f(x) = Ax + Bu$, we supply our Q and R cost functions and apply lqr. We care a
+lot about the $\theta_1$, some about the $\dot\theta_1$, a bit about
+$\dot\theta_2$, and not at all about $\theta_2$.  We also put a cost on the
+input using $\textbf{R}$(here we closely follow the
 assignment, since it turns out we will not be able to apply LQR to our physical
 system).
 
@@ -829,8 +846,49 @@ Using the LQR function built into Drake, we get (rounded)
     \end{bmatrix}
 \end{align}
 
+where K is our control matrix, operating on each of the four states ($q =
+\theta_1, \theta_2, \dot \theta_1, \dot \theta_2$); and S is the solution of the
+Ricatti equation.
+
+% TODO: explore this S matrix further!!!
+% Define what is the associated Ricatti equation
 
 \subsection{Region of Attraction via Lyapunov}
+
+We will briefly cover the region of attraction (RoA) analysis, which is covered
+in the problem set already. For an LQR controller, which uses a linearization of
+underlying nonlinear dynamics, this analysis tells us the region for which the
+linearization is valid (and therefore our LQR control can be used). 
+
+Specifically, we will use Lyapunov analysis. Lyapunov analysis is a relaxed
+optimization guarantee -- instead of guaranteeing an controller optimal for all
+states will be found, we instead guarantee a controller will be able to
+accomplish a given state. 
+
+
+With the LQR controller, which operates as a constant matrix times the 
+state error (from the desired fixed point)
+
+\begin{align}
+    u = - K(x_{\text{measured} - x_{\text{fixed point}}
+\end{align}
+
+We denot the error as $\bar x = x - x_{fp}$.
+
+For our Lyapunov function, we can use the cost-to-go of the LQR solution 
+
+\begin{align}
+    V_{\text{cost-to-go} &= 
+\end{align}
+
+% TODO definte lyapunov function
+
+
+Of course, in performing this analysis we have picked a particular known
+reasonble Lyapunov function. Other functions are possible, which would given
+slightly different regions of attraction for the same LQR controller.
+
+% TODO: go more into this?
 
 \subsection{Energy-based Controller for Swingup}
 
@@ -838,6 +896,7 @@ Using the LQR function built into Drake, we get (rounded)
 
 \section{LQR for "System on Wheels"}
 
+%https://ocw.mit.edu/courses/mechanical-engineering/2-003sc-engineering-dynamics-fall-2011/lagrange-equations/MIT2_003SCF11_rec8notes1.pdf
 
 For a detour (in order to demonstrate understanding of the problem set material)
 we imagine sticking the whole thing on wheels and redo the same analysis,
@@ -854,8 +913,6 @@ expect that we can still stabilize the system, but cannot control the cart
 position while keeping the pendulum upright (at least with LQR feedback).
 
 To check our intuition, we check the rank of the controllability matrix, defined as
-
-
 
 
 
@@ -992,19 +1049,17 @@ We got it to invert!
 In the future, LQR ... :'( 
 But for simple systems like this inverted pendulum (and not humanoids) PD is
 plenty, don't need LQR really.
-And then... stick it on wheels!
-
-
-% conference papers do not normally have an appendix
-
+And then... stick it on wheels! -- however this version will likely be 3d
+printed...
 
 % use section* for acknowledgment
 \section*{Acknowledgment}
 
-
-The authors would like to thank...
-
-
+The authors would like to thank Elizabeth Mitten for theory help
+Shane Colton, Mason Massie, eom
+Shane Colton, PD control and current control
+Bayley Wang, current control and late-night company
+Ben Katz, PD tuning
 
 
 
@@ -1086,6 +1141,11 @@ K_inertial = Matrix([0.5 * I1 * t1dot**2 + \
 
 P = Matrix([-1 * m1 * g * (l1 * cos(t1)) + -1 * m2 * g * (l2 * cos(t1))])
 L =  K_translat + K_inertial - P
+
+# To calculate time derivatives of a function f(q), we use:
+# df(q)/dt = df(q)/dq * dq/dt = df(q)/dq * qdot
+
+
 partial_L_by_partial_q = L.jacobian(Matrix([q])).T
 partial_L_by_partial_qdot = L.jacobian(Matrix([qdot]))
 d_inner_by_dt = partial_L_by_partial_qdot.jacobian(Matrix([q])) * qdot + \
@@ -1100,6 +1160,8 @@ t2ddot = simplify(r[t2ddot])
 
 print('t1ddot= {}\n'.format(t1ddot));
 print('t2ddot= {}\n'.format(t2ddot));
+
+# --- Simply substitute, for theta = pi2,  sin pi = 1, sin theta ~= (pi - theta )
 
 \end{lstlisting}
 
