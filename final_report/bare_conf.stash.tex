@@ -1,7 +1,91 @@
+%% bare_conf.tex
+%% V1.4b
+%% 2015/08/26
+%% by Michael Shell
+%% See:
+%% http://www.michaelshell.org/
+%% for current contact information.
+%%
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.8b or later) with an IEEE
+%% conference paper.
+%%
+%% Support sites:
+%% http://www.michaelshell.org/tex/ieeetran/
+%% http://www.ctan.org/pkg/ieeetran
+%% and
+%% http://www.ieee.org/
+
+%%*************************************************************************
+%% Legal Notice:
+%% This code is offered as-is without any warranty either expressed or
+%% implied; without even the implied warranty of MERCHANTABILITY or
+%% FITNESS FOR A PARTICULAR PURPOSE!
+%% User assumes all risk.
+%% In no event shall the IEEE or any contributor to this code be liable for
+%% any damages or losses, including, but not limited to, incidental,
+%% consequential, or any other damages, resulting from the use or misuse
+%% of any information contained here.
+%%
+%% All comments are the opinions of their respective authors and are not
+%% necessarily endorsed by the IEEE.
+%%
+%% This work is distributed under the LaTeX Project Public License (LPPL)
+%% ( http://www.latex-project.org/ ) version 1.3, and may be freely used,
+%% distributed and modified. A copy of the LPPL, version 1.3, is included
+%% in the base LaTeX documentation of all distributions of LaTeX released
+%% 2003/12/01 or later.
+%% Retain all contribution notices and credits.
+%% ** Modified files should be clearly indicated as such, including  **
+%% ** renaming them and changing author support contact information. **
+%%*************************************************************************
+
+
+% *** Authors should verify (and, if needed, correct) their LaTeX system  ***
+% *** with the testflow diagnostic prior to trusting their LaTeX platform ***
+% *** with production work. The IEEE's font choices and paper sizes can   ***
+% *** trigger bugs that do not appear when using other class files.       ***                          ***
+% The testflow support page is at:
+% http://www.michaelshell.org/tex/testflow/
+
 
 
 \documentclass[conference]{IEEEtran}
 %\documentclass[conference]{IEEEconf_allowlinks}
+% Some Computer Society conferences also require the compsoc mode option,
+% but others use the standard conference format.
+%
+% If IEEEtran.cls has not been installed into the LaTeX system files,
+% manually specify the path to it like:
+% \documentclass[conference]{../sty/IEEEtran}
+
+
+
+
+
+% Some very useful LaTeX packages include:
+% (uncomment the ones you want to load)
+
+
+% *** MISC UTILITY PACKAGES ***
+%
+%\usepackage{ifpdf}
+% Heiko Oberdiek's ifpdf.sty is very useful if you need conditional
+% compilation based on whether the output is pdf or dvi.
+% usage:
+% \ifpdf
+%   % pdf code
+% \else
+%   % dvi code
+% \fi
+% The latest version of ifpdf.sty can be obtained from:
+% http://www.ctan.org/pkg/ifpdf
+% Also, note that IEEEtran.cls V1.7 and later provides a builtin
+% \ifCLASSINFOpdf conditional that works the same way.
+% When switching from latex to pdflatex and vice-versa, the compiler may
+% have to be run twice to clear warning/error messages.
+
+
 
 
 
@@ -10,6 +94,21 @@
 %
 \usepackage{cite}
 \usepackage{listings} % FOR CODE BLOCK 
+% cite.sty was written by Donald Arseneau
+% V1.6 and later of IEEEtran pre-defines the format of the cite.sty package
+% \cite{} output to follow that of the IEEE. Loading the cite package will
+% result in citation numbers being automatically sorted and properly
+% "compressed/ranged". e.g., [1], [9], [2], [7], [5], [6] without using
+% cite.sty will become [1], [2], [5]--[7], [9] using cite.sty. cite.sty's
+% \cite will automatically add leading space, if needed. Use cite.sty's
+% noadjust option (cite.sty V3.8 and later) if you want to turn this off
+% such as if a citation ever needs to be enclosed in parenthesis.
+% cite.sty is already installed on most LaTeX systems. Be sure and use
+% version 5.0 (2009-03-20) and later if using hyperref.sty.
+% The latest version can be obtained at:
+% http://www.ctan.org/pkg/cite
+% The documentation is contained in the cite.sty file itself.
+
 
 
 
@@ -31,22 +130,22 @@
   deletekeywords={...},            % if you want to delete keywords from the given language
   escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
   extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
-  firstnumber=1000,                % start line enumeration with line 1000
-  frame=single,                    % adds a frame around the code
+  %firstnumber=1000,                % start line enumeration with line 1000
+  frame=single,	                   % adds a frame around the code
   keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
   keywordstyle=\color{blue},       % keyword style
   language=Octave,                 % the language of the code
   morekeywords={*,...},            % if you want to add more keywords to the set
   %numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
   %numbersep=5pt,                   % how far the line-numbers are from the code
-  %numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
   rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
   showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
   showstringspaces=false,          % underline spaces within strings only
   showtabs=false,                  % show tabs within strings adding particular underscores
   stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
   stringstyle=\color{mymauve},     % string literal style
-  tabsize=2,                     % sets default tabsize to 2 spaces
+  tabsize=2,	                   % sets default tabsize to 2 spaces
   title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
 }
 \usepackage{hyperref}
@@ -303,22 +402,17 @@ Email: nouyang@g.harvard.edu}
 
 % make the title area
 \maketitle
-\noindent \textit{Written: May 22, 2019} \\ \\
+
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
-\begin{abstract} We explore the classic nonlinear controls problem, inverting a
-    pendulum, using analyses learned in this class. Specifically, we look at
-    using a flywheel to stabilize the pendulum. In simulation, we derive the
-    equations of motion and apply LQR and region of attraction analyses for our
-    system. We also build a hardware system from scratch. In hardware, we
-    successfully implement downward stabilization, swingup (using a bang-bang
-    four state controller), and inverted stabilization (using both a PD
-    controller) and a bang-bang controller. Future work includes adding either
-    current control or motor velocity estimate to allow for use of LQR control 
-    and not just PD control. A demo video can be found at \url{https://youtu.be/bWbEt6hoUvY}.
+\begin{abstract}
+We explore the classic nonlinear controls problem, inverting a pendulum, using analyses learned in this class. Specifically, we look at using a flywheel to stabilize the pendulum. We build a physical system from scratch. In simulation, we derive the equations of motion and apply LQR and region of attraction analyses for our system. We additionally perform controllability analysis to the case where the full state may not be measurable, as happened in our physical system. In hardware, we successfully implement downward stabilization and swingup controls using both a PD controller an a bang-bang controller. We discuss the design decisions, design iterations, and present work toward implementing a controller for the inverted state.
 \end{abstract}
 
 % no keywords
+
+
+
 
 % For peer review papers, you can put extra information on the cover
 % page as needed:
@@ -330,138 +424,43 @@ Email: nouyang@g.harvard.edu}
 % creates the second title. It will be ignored for other modes.
 \IEEEpeerreviewmaketitle
 
+
+
 \section{Introduction}
 % no \IEEEPARstart
-The inverted pendulum problem has been widely explored in robotics and control
-theory. In this project, we control a single-link pendulum using a
-torque-controlled inertial wheel. We tackle the problems of stabilizing at the
-bottom (0 deg) and swinging up to stabilize at the top (180 deg). \\ 
+Pendulum is inherently unstable around upright fixed point.
 
-\subsection{Related Work} The theory of the reaction-wheel inverted pendulum
-problem has been widely explored. For related work, we turned more to a few
-actual hardware implementations of similar problems that are documented online.
-
-
-In 2010, a prior 6.832 student, Hunter McClelland, built a reaction wheel
-inverted pendulum. \cite{prior}.  In 2013, Spanlang, Mayr, and Gattringer of the Institute of Robotics at Johannes
-Kepler University Linz (Austria) built a reaction-wheel inverted pendulum
-contained within a 18x18x18 cm cube, using the floor as the base of the
-pendulum. \cite{mayr2015mechatronic}.
-
-In 2012, Shane Colton built the Seg Stick at
-MITERS (the machine shope we built our project in). The Seg Stick is a
-self-balancing broomstick powered by two drill-driven wheels at the base of the
-stick. It has the functionality of the cart-pole system, but less constrained,
-and with the ability to move the system while balancing. In section IV, we
-further discuss the possibilities of adding a similar feature to our
-reaction-wheel inverted pendulum system. See \cite{scolton}
 
 %Example write-up:
 % http://web.mit.edu/sjlevine/www/project_data/bicycle-planning/sjlevine_final_report.pdf
 % ttps://en.wikipedia.org/wiki/Nonlinear_system
 
-In 2016, Ben Katz posted a blog about the process of building a Furuta Pendulum
-from scratch and using LQR controls. For Furuta-type inverted pendulums, instead of
-controlling the $x$ coordinate of the base of the pendulum, the control is in
-the form of another rotational axis on which the pendulum is attached
-orthogonally. Thus, by rotating the system rapidly in the $x, y$ plane,
-stability in the $z$ plane can be achieved.  \cite{katz}
+\hfill mds
 
-A few further resources were documented online on a blog post \cite{projects}.
-
-
-%\subsection{Todo} Control authority analysis -- max torque output as function
-%of motor and flywheel (torque constraints) Compare to mglsin theta -- what is
-%the maximum deviation angle we can recover from
-\section{Hardware Methods} 
-
-To constrain our reaction wheel inverted pendulum, we
-constructed a wooden jig that holds a spinning shaft in place with two ball
-bearings. The shaft (functioning as the base of the pendulum) is fixed to the
-plastic lever at the end of which the flywheel and motor are mounted. An encoder
-is press-fit into the shaft at the base of the pendulum, which gives us our
-$\theta_1$ value. To further minimize the escaping of the system's energy
-through means other than rotation, the system is clamped down. We used an
-Arduino Uno for electronics and code.
-
-%\begin{figure}[h]
-    %\centering
-    %\includegraphics[width=0.3\linewidth]{images/encoder.png}
-    %\caption{Encoder pressfit (initially prototype -- final has glue replaced
-    %with screws.}
-    %\label{encoder}
-%\end{figure}
-
-As with any hardware project, it
-took multiple iterations to arrive at a sufficiently-controllable prototype. The
-first iteration used a printer motor, and a solid aluminum flywheel with about 4
-inches in diameter.  After experimenting with trying to control the pendulum
-with this setup, it became apparent that the flywheel needed more inertia.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\linewidth]{images/original.png}
-    \caption{Original motor (with encoder) and flywheel}
-    \label{original}
-\end{figure}
-
-After adding more weight and a slight increase in diameter to the
-flywheel, we experimented further. A higher swingup was able to be commanded by
-this improvement, but we needed a motor with more torque, because the motor
-required an unnecessarily long ramp down in speed before switching directions.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\linewidth]{images/fly.png}
-    \caption{Three iterations of flywheel}
-    \label{fly}
-\end{figure}
-
-Our third and final iteration featured a flywheel with a much larger
-diameter and weight distributed more on the perimeter, and a large upgrade to a
-drill motor with significantly more torque (available from harbor freight).
-These vast increases in both torque and inertia finally allowed the system to
-command the acceleration necessary for a full swingup.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\linewidth]{images/upright.png}
-    \caption{Static upright pendulum}
-    \label{upright}
-\end{figure}
-    
-
+\hfill May 22, 2019
 
 %\subsection{Todo}
 %Control authority analysis -- max torque output as function of motor and flywheel (torque constraints)
 %Compare to mglsin theta -- what is the maximum deviation angle we can recover from
+
 \section{Hardware Methods}
-To constrain our reaction wheel inverted pendulum, we constructed a wooden jig that holds a spinning shaft in place with two ball bearings. The shaft (functioning as the base of the pendulum) is fixed to the plastic lever at the end of which the flywheel and motor are mounted. An encoder is press-fit into the shaft at the base of the pendulum, which gives us our $\theta_1$ value. To further minimize the escaping of the system's energy through means other than rotation, the system is clamped down. We used an Arduino Uno for electronics and code.\\ \indent
-As with any hardware project, it took multiple iterations to arrive at a sufficiently-controllable prototype. The first iteration used a printer motor, and a solid aluminum flywheel with about 4 inches in diameter.  After experimenting with trying to control the pendulum with this setup, it became apparent that the flywheel needed more inertia. \\ \indent
-After adding more weight and a slight increase in diameter to the flywheel, we experimented further. A higher swingup was able to be commanded by this improvement, but we needed a motor with more torque, because the motor required an unnecessarily long ramp down in speed before switching directions.\\ \indent 
-Our third and final iteration featured a flywheel with a much larger diameter and weight distributed more on the perimeter, and a large upgrade to a drill motor with significantly more torque (available from harbor freight). These vast increases in both torque and inertia finally allowed the system to command the acceleration necessary for a full swingup.
+
+First, motor with encoder, and small flywheel.
+Insert picture of the three iterations.
+
+(Final motor was a drill motor, available for ~\$25 at harbor freight)
 
 \subsection{Theory to Reality}
 
-Later in the paper, we will explain the LQR theory. In reality, however, we
-relied on PD control. The reasons for this are as follows:
+Below, we will explain the LQR theory. However, in reality we relied on PD
+control. The reasons for this are:
 
-\begin{itemize} 
-\item
-    Limited torque output. Even though our final motor brought a significant
-    increase in torque, it was still far from the ideal (part of this was due to
-    the flywheel's relatively large mass). For full controllability, we'd want a
-    motor with enough torque to be able to handle rapid direction switching at
-    high angular velocities.  
-\item Lack of motor encoder. Though our first
-    motor had an attached encoder, it did not have nearly enough torque, so we
-    had to upgrade. Unfortunately, the newer drill motor did not have an
-    attached encoder, so we lost the ability to track $\theta_2$.
-    $\dot{\theta}$, and $\ddot{\theta}_2$ accurately. Naturally, losing those
-    state variables resulted in a decrease in controllability.  
-\item \textbf{Lack of current control}. The software controller we wrote outputs torque, but we do
-    not command torque directly (the motor interface only takes angular velocity
-    as input).
+\begin{itemize}
+    \item Limited torque output
+    \item Lack of motor encoder
+    \item Lack of current control -- our software controller outputs torque, but
+    we do not command torque directly, and needed to write an inner PID loop  (I
+    can fill this in)
 \end{itemize}
 
 
@@ -471,36 +470,22 @@ was a high quality one (1025 counts).
 
 We furthermore use a naive method to estimate angular velocities from the
 encoder counts: measure time elapsed and the change in angle, divide, set as our
-thetadot.  
+thetadot.
+
+(Non constant time frame)
 
 \subsection{Swingup with Bang-Bang Control}
-To get an initial working implementation to swing the pendulum up to 180 degrees, we used a simple bang-bang controller. The protocol is as follows. When $\theta_1 > 0$ and $\dot{\theta}_1$, run the motor at full speed clockwise to maximize the amplitude reached. When the apex of that period is reached (i.e. $\dot{\theta}_1 = 0$), run the motor at full speed in the opposite direction. Essentially, run the motor at full speed in whatever direction is consistent with the pendulum's direction of travel, w.r.t. the overall system. If the pendulum is moving clockwise, spin clockwise. If the pendulum is moving counterclockwise, spin counterclockwise. Using this bang-bang controller, we were able to achieve full swingup.\\ \indent
-To make the swingup more efficient, we implemented a more complex controller, utilizing energy shaping (covered in section III F).
+
 \subsection{Inversion with PD Control}
-For downward convergence, we used a simple Proportional-Derivative (PD) controller with two k values: one for $\theta_1$, and one for $\dot{\theta_1}$. Our feedback for motor output was formulated by: $$\textrm{motor output = } - ceil(k(\theta_1-\theta_{1d})-k_d (\dot{\theta}_1-\theta_{1dotd}))$$ where $k$ and $k_d$ represent the proportional and derivative constants, respectively, $\theta_{1d}$ represents the desired $\theta_1$ value (0.0), and $\theta_{1dotd}$ the desired $\dot{\theta}_1$ value (0.0). To choose our $k$ constants, we used a potentiometer to our arduino setup, for easy, on-the-go tuning. 
+
+We used a simple control with two k values: one for theta, and one for thetadot.
+This is equivalent to a PD controller.
 
 \subsection{Results}
-To quantify the efficacy of our controller, we timed multiple different tasks for both our first iteration (with the smaller flywheel and weaker motor), and our final iteration (with the larger flywheel and stronger motor). The tasks we timed were natural downward convergence (how long the pendulum takes to converge at 0 deg when started at 90 deg, without any control input), controlled downward convergence (how long the pendulum takes to converge at 0 deg when started at 90 deg, with control input), and controlled swingup (how long it takes for the pendulum to swing up to 180 deg). These findings are displayed in Table I.
-\begin{table}[h]
-\caption{}
-\scalebox{.8}{%
-\begin{tabular}{c|c|c|c|}
-\cline{2-4}
-                                                                                                                  & \begin{tabular}[c]{@{}c@{}}Natural \\ Downward\\  Convergence \\ (starting at 90 deg)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Controlled \\ Downward \\ Convergence \\ (starting at 90 deg)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Controlled \\ Swingup \\ (starting at 0 deg)\end{tabular} \\ \hline
-\multicolumn{1}{|c|}{\begin{tabular}[c]{@{}c@{}}First Flywheel \\ (smaller) \\ and Weaker \\ Motor\end{tabular}}  & 45 secs                                                                                            & 11 secs                                                                                               & 23 secs                                                                              \\ \hline
-\multicolumn{1}{|c|}{\begin{tabular}[c]{@{}c@{}}Final Flywheel \\ (larger) \\ and Stronger \\ Motor\end{tabular}} & 46 secs                                                                                            & 3 secs                                                                                                & 3 sec                                                                                \\ \hline
-\end{tabular}}
-\caption{Results on the downward stabilization and swingup tasks (the upright
-stabilization was not timed).}
-\end{table}
-Video clips of these on the system can be found here:
-\begin{itemize}
-    \item Final Flywheel natural from 90: \url{https://bit.ly/2JXV39B}
-    \item Final Flywheel controlled from 90: \url{https://bit.ly/2WipsWJ}
-    \item First Flywheel (partial) Swingup: \url{https://bit.ly/2X7tI8R}
-    \item Second Flywheel (full) Swingup: \url{https://bit.ly/2WlHmrA}
-    \item Final Flywheel (full) Swingup: \url{https://bit.ly/2VE6Qfn}
-\end{itemize}
+
+Insert a table here! Our excellent results.
+
+And link to the videos.
 
 
 \section{Simulation Analysis}
@@ -570,6 +555,7 @@ velocities here and our stick has mass and our previous point mass is instead a 
 flywheel. The general formula is $KE = \frac{1}{2} I_2 \dot\theta^2$.
 Noting that angular velocities "add", and applying this to each component of our
 system; we calculate 1) inertial KE of the stick 2) inertial KE of the flywheel.
+
 \begin{align}
     KE_{\text{inertial}} &= \frac{1}{2} I_1 \dot\theta_1^2 + \frac{1}{2}
     I_2 (\dot\theta_1 + \dot\theta_2)^2
@@ -764,37 +750,28 @@ substitute in the approximation around $\theta = \pi$
     \end{bmatrix}
 \end{align}
 
+Thus, we have linearized and found the A and B terms.
+
 \subsubsection{A and B}
 
-If we plug in the measurements from our physical system as in
-\cref{tbl:systemparameters}, we get the following A and B matrices (rounded).
-
-
-%In [15]: ((m1 * l1 + m2 * l2 ) * g ) / (m1 * l1**2 + m2 * l2**2 + I1)
-%Out[15]: 321.4384508990318
-
-%In [16]: (-1 / (m1 * l1**2 + m2 * l2**2 + I1))
-%Out[16]: -1568.169914346559
-
-%In [17]: (1/I2) + (1/(m1*l1**2 + m2*l2**2 + I1))
-%Out[17]: 2075.1600407138476
-
-%In [18]:
+Now we plug in the measurements from our physical system as in
+\cref{tbl:systemparameters}, and get the following A and B matrices (rounded for
+display):
 
 \begin{align}
     A &= 
     \begin{bmatrix}
         0 & 0 & 1 & 0 \\
         0 & 0 & 0 & 1 \\
-        321 & 0 & 0 & 0 \\
-        -321  & 0 & 0 & 0
+        55.5 & 0 & 0 & 0 \\
+        -55.5 & 0 & 0 & 0
     \end{bmatrix} \\
     B &=  
     \begin{bmatrix}
         0 \\
         0 \\
-        -1568\\
-       2075 
+        -1395\\
+        1901
     \end{bmatrix}
 \end{align}
 %originally A is  5 -5. and B is -0.1 11
@@ -811,8 +788,8 @@ and $m_1$ = $m_{motor}$.
 \end{figure}
 
 \subsection{Constants}
-See \ref{tbl:constants}
-\begin{table}[!h]
+
+\begin{table}[!t]
     \renewcommand{\arraystretch}{1.5}
     \caption{System Constants}
     \label{tbl:systemparameters}
@@ -821,14 +798,13 @@ See \ref{tbl:constants}
         \hline
         Property & Measurement \\
         \hline
-        $m_{stick}$ = & 115 g \\
+        $m_{stick} = m_1$ & 115 g \\
         $m_{flywheel}$ & 546 g\\
         $m_{motor}$ & 450 g \\ % TODO: estimated
-        $l_{stick} $ & 21 cm \\
+        $l_{stick} = l_2$ & 21 cm \\
         $r_{flywheel}$ & 8.5 cm \\ % TODO: estimated
         \hline
     \end{tabular}
-    \label{tbl:constants}
 \end{table}
 
 \subsection{Applying LQR}
@@ -981,143 +957,17 @@ With the particular caveat that the same system could be technically be fully or
 
 \section{LQR for "System on Wheels"}
 
+%https://ocw.mit.edu/courses/mechanical-engineering/2-003sc-engineering-dynamics-fall-2011/lagrange-equations/MIT2_003SCF11_rec8notes1.pdf
 
 For a detour (in order to demonstrate understanding of the problem set material)
-we imagine sticking the whole thing on wheels and redo the same analysis.
-(For sanity we run the calculations through sympy instead of by hand).
+we imagine sticking the whole thing on wheels and redo the same analysis,
+although for sanity we run the calculations through sympy instead of by hand.
+
+The pendulum now is affixed to a cart. The cart is at position $x$ and has mass
+$M$.
 
 
-\subsection{Equations of Motion}
-
-\noindent 1) \textbf{Write the KE of the system}. We can decompose this into the translational and
-rotational components. First, let's write the x and y components of each part.
-The cart is located at x = $x$ and y = 0.
-
-\begin{align}
-    \text{position\_cart} &= [x, 0] \\
-    \text{position\_stick} &= [x + l_1 \sin(\theta_1), l_1 \cos(\theta_1)] \\
-    \text{position\_wheel} &= [x + l_2 \sin(\theta_1), l_2 \cos(\theta_1)]
-\end{align}
-
-
-Asking sympy to take derivatives since it's easy to drop terms by hand,
-
-\begin{align}
-    \text{velocity\_cart} &= [\dot x, 0] \\
-    \text{velocity\_stick} &= [l_1 \dot\theta_1 \cos(\theta_1) + \dot x, - l_1 \dot\theta_1 \sin(\theta_1)] \\
-    \text{velocity\_wheel} &= [l_2 \dot\theta_1 \cos(\theta_1) + \dot x, -l_2 \dot\theta_1 \sin(\theta_1)]
-\end{align}
-
-Then we get
-
-\begin{align}
-    KE_{\text{translational}} &= \frac{1}{2} M \text{v\_cart}^2 + \frac{1}{2} m_1 \text{v\_stick}^2 + \frac{1}{2} m_2 \text{v\_wheel}^2
-\end{align}
-
-And as before we get the inertial kinetic energy term
-
-\begin{align}
-    KE_{\text{inertial}} &= \frac{1}{2} I_1 \dot\theta_1^2 + \frac{1}{2} I_2 (\dot\theta_1 + \dot\theta_2)^2
-\end{align}
-
-
-\noindent 3) Now we have the Lagrangian $L = KE - PE$ and must take the partial of the Lagrangian with
-respect to each state variable, in our case $x$, $\theta_1$ and $\theta_2$.
-        %-g l_1 m_1 \sin(\theta_1) - g l_2 m_2 \sin(\theta_1)
-        %+ l_1^2 m_1 \dot \theta_1^2 \sin(\theta_1) \cos(\theta_1) 
-        %- l_1 m_1 \dot \theta_1 (l_1 \dot \theta_1 \cos(\theta_1) + \dot x) \sin(\theta_1) 
-        %+ l_2^2 m_2 \dot\theta_1^2 \sin(\theta_1) \cos(\theta_1) 
-        %- l_2 m_2 \dot \theta_1 (l_2 \dot \theta_1 \cos(\theta_1) + \dotx \sin(\theta_1) \\
-
-\begin{align*}
-    \frac{\partial L}{\partial q} &=
-    \begin{bmatrix}
-        0 \\
-        -(g m_1 l_1 + g m_2 l_2 + m_1 l_1 \dot \theta_1 \dot x + m_2 l_1 \dot \theta_1 \dot x \sin(\theta_1))\\
-        0
-    \end{bmatrix}
-\end{align*}
-
-\noindent 4) As an intermediate step, we calculate the partial of $L$ with
-respect to $\dot q$,  $\frac{\partial L}{\partial \dot q}$.
-
-Here we copy from sympy the three terms
-
-\begin{lstlisting}
-([[M*xdot + m1*(2*l1*t1dot*cos(t1) + 2*xdot)/2 + m2*(2*l2*t1dot*cos(t1) + 2*xdot)/2, 
-
-1.0*I1*t1dot + 0.5*I2*(2*t1dot + 2*t2dot) + l1**2*m1*t1dot*sin(t1)**2 + l1*m1*(l1*t1dot*cos(t1) + xdot)*cos(t1) + l2**2*m2*t1dot*sin(t1)**2 + l2*m2*(l2*t1dot*cos(t1) + xdot)*cos(t1), 
-
-0.5*I2*(2*t1dot + 2*t2dot)]]))
-\end{lstlisting}
-
-
-\noindent 5) Finally, we calculate the time derivative of the previous term.
-Here we again note directly from sympy $\frac{d}{dt} \frac{\partial L}{\partial
-\dot q_i}$ = 
-
-\begin{lstlisting}
-t1ddot*(l1*m1 + l2*m2)*cos(t1) - t1dot**2*(l1*m1 + l2*m2)*sin(t1) + xddot*(M + m1 + m2)],
-
-1.0*I1*t1ddot + 1.0*I2*t1ddot + 1.0*I2*t2ddot + 1.0*l1**2*m1*t1ddot - 1.0*l1*m1*t1dot*xdot*sin(t1) + 1.0*l1*m1*xddot*cos(t1) + 1.0*l2**2*m2*t1ddot - 1.0*l2*m2*t1dot*xdot*sin(t1) + 1.0*l2*m2*xddot*cos(t1),
-
-1.0*I2*(t1ddot + t2ddot)
-\end{lstlisting}
-
-\noindent 6) We set the equation equal, on the right hand side, to our input torque $\tau$.  We may then directly ask sympy to solve for $\ddot q$
-
-\begin{lstlisting}
-xddot= -(l1*m1 + l2*m2)*(0.5*g*(l1*m1 + l2*m2)*sin(2.0*t1) + t1dot**2*(I1 + l1**2*m1 + l2**2*m2)*sin(t1) + tau*cos(t1))/(I2*(M + m1 + m2) + (l1*m1 + l2*m2)**2*cos(t1)**2 - (M + m1 + m2)*(I1 + I2 + l1**2*m1 + l2**2*m2))
-
-t1ddot= (g*(l1*m1 + l2*m2)*(M + m1 + m2)*sin(t1) + 0.5*t1dot**2*(l1*m1 + l2*m2)**2*sin(2.0*t1) + tau*(M + m1 + m2))/(I2*(M + m1 + m2) + (l1*m1 + l2*m2)**2*cos(t1)**2 - (M + m1 + m2)*(I1 + I2 + l1**2*m1 + l2**2*m2))
-
-t2ddot= (-I2*g*(l1*m1 + l2*m2)*(M + m1 + m2)*sin(t1) - 0.5*I2*t1dot**2*(l1*m1 + l2*m2)**2*sin(2.0*t1) + tau*((l1*m1 + l2*m2)**2*cos(t1)**2 - (M + m1 + m2)*(I1 + I2 + l1**2*m1 + l2**2*m2)))/(I2*(I2*(M + m1 + m2) + (l1*m1 + l2*m2)**2*cos(t1)**2 - (M + m1 + m2)*(I1 + I2 + l1**2*m1 + l2**2*m2)))
-\end{lstlisting}
-
-\subsection{Linearization}
-
-With the above values, we can linearize as before. Our A matrix should now be a
-6x6 matrix instead of a 4x4 matrix. Solving for  $\dot x = A x + B u$
-
-\begin{align}
-    \dot x &=
-    \begin{bmatrix}
-        \dot x \\
-        \dot \theta_1 \\
-        \dot \theta_2 \\
-        \ddot x \\
-        \ddot \theta_1 \\
-        \ddot \theta_2 \\
-    \end{bmatrix},
-    Ax = 
-    \begin{bmatrix}
-        0 & 0 & 0 & 1 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 1 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 1 \\
-        (\text{see } \ddot x \text{ above}) \\
-        (\text{see } \ddot \theta_1 \text{ above}) \\
-        (\text{see } \ddot \theta_2  \text{ above}) \\
-    \end{bmatrix} 
-    \begin{bmatrix}
-        x \\
-        \theta_1 \\
-        \theta_2 \\
-        \dot x \\
-        \dot \theta_1 \\
-        \dot \theta_2 \\
-    \end{bmatrix}
-\end{align}
-
-
-\subsection{LQR}
-
-Now we can directly plug A, B, Q, and S into LQR to get out a linear controller.
-This is ommitted for time reasons. The Lyapunov analysis should follow easily as
-well from the problem set. The energy shaping analysis requires more
-modification, but is omitted for time reasons.
-
-
-%https://ocw.mit.edu/courses/mechanical-engineering/2-003sc-engineering-dynamics-fall-2011/lagrange-equations/MIT2_003SCF11_rec8notes1.pdf
+\cite{JS-aruco}
 
 
 %\subsection{Controllability}
@@ -1131,67 +981,86 @@ modification, but is omitted for time reasons.
 %To check our intuition, we check the rank of the controllability matrix, defined as
 
 
-
 %RS-550S-18V
 %https://www.harborfreight.com/18-volt-cordless-38-drilldriver-with-keyless-chuck-68239.html
 %https://grabcad.com/library/rs-550s-18v-harbor-freight-900rpm-18v-cordless-drill-motor-and-gearbox-1#!
+\section{Discussion}
+
+\subsection{Discussion}
+
+1) estimate motor velocity: if we wanted to, we could do it from current
+
+It does seem from online that it's possible to stabilize with this estimate
+(link to youtube video)
+
+2) rebuild with less torque limited (maybe try this analysis again? I didn't get
+it to work above -- skip if running out of time)
 
 
-%\section{Discussion}
-
-%\subsection{Discussion}
-
-%1) estimate motor velocity: if we wanted to, we could do it from current
-
-%It does seem from online that it's possible to stabilize with this estimate
-%(link to youtube video)
-
-%2) rebuild with less torque limited (maybe try this analysis again? I didn't get
-%it to work above -- skip if running out of time)
 
 
+\subsection{Mechanical Lessons Learned}
 
-%\subsection{Mechanical Lessons Learned}
-
-%Pressfits are great! They’re used for… everything.
-%Decisiveness is good – we weren’t certain about going for the better motor, which instinctually thought it’d be needed but went for it and glad we did.
-%Glad we gave some consideration to clearance – bigger motor and flwheel barely fit (scrapes the staples).
-%Maybe would go back to 3d printed version
-%Current control
+Pressfits are great! They’re used for… everything.
+Decisiveness is good – we weren’t certain about going for the better motor, which instinctually thought it’d be needed but went for it and glad we did.
+Glad we gave some consideration to clearance – bigger motor and flwheel barely fit (scrapes the staples).
+Maybe would go back to 3d printed version
+Current control
 
 
-\section{Conclusion and Future Work}
+\section{Future Work and Conclusion}
 
-Building this system from scratch, including fabricating, wiring, and coding,
-came with numerous lessons. We learned, for example, the importance of being
-quantitative in the setup and design of the system (i.e. calculating torque
-needed to control the system, given the inertial properties of the flywheel,
-etc.), first hand. We also experienced the nuances of different control methods,
-and when each can and cannot be used (i.e. not having all of the measured states
-required for LQR, and thus switching to a PD controller with energy-shaping). We
-faced the many realities that come with hardware projects, but were ultimately
-able to control the reaction-wheel inverted pendulum with just a PD controller,
-achieving relative stability at both the origin and apex. 
-
-Future work should include verifying the robustness of the system and quantifying the region of
-attraction of this physical system, which will allow for more precise control. Eventually, we'd like to transition to a 3D printed version of this system and stick it on wheels!
-
-\newpage
-%We got it to invert!
-%In the future, LQR ... :'( 
-%But for simple systems like this inverted pendulum (and not humanoids) PD is
-%plenty, don't need LQR really.
-%And then... stick it on wheels! -- however this version will likely be 3d
-%printed...
+We got it to invert!
+In the future, LQR ... :'( 
+But for simple systems like this inverted pendulum (and not humanoids) PD is
+plenty, don't need LQR really.
+And then... stick it on wheels! -- however this version will likely be 3d
+printed...
 % use section* for acknowledgment
-\section*{Acknowledgments}
+\section*{Acknowledgment}
 
-The authors would like to thank many people, including: on the theory side,
-Elizabeth Mitten and Shane Colton for theory help, the TAs Wei Gao and Yunzhu
-Li, the instructor Prof. Russ Tedrake. Motor control discussion, Bayley Wang
-(and Shane). PD tuning method, Ben Katz.
+The authors would like to thank Elizabeth Mitten for theory help
+Shane Colton, Mason Massie, eom
+Shane Colton, PD control and current control
+Bayley Wang, current control and late-night company
+Ben Katz, PD tuning
+
+
+
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% references section
+
+% can use a bibliography generated by BibTeX as a .bbl file
+% BibTeX documentation can be easily obtained at:
+% http://mirror.ctan.org/biblio/bibtex/contrib/doc/
+% The IEEEtran BibTeX style support page is at:
+% http://www.michaelshell.org/tex/ieeetran/bibtex/
+%\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+%\bibliography{IEEEabrv,../bib/paper}
+%
+% <OR> manually copy in the resultant .bbl file
+% set second argument of \begin to the number of references
+% (used to reserve space for the reference number labels box)
+
+%\begin{thebibliography}{1}
+
+%\bibitem{IEEEhowto:kopka}
+%H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+  %0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
 
 %\end{thebibliography}
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,references}
@@ -1205,11 +1074,9 @@ Li, the instructor Prof. Russ Tedrake. Motor control discussion, Bayley Wang
 % help, B. Wang and MITERS for 3D printing, S. Colton, I. Tolkova, K. Sebesta,
 % A. Pas, M. Rodruigez and N. Kirkby for paper advice.
 
-\clearpage
 
 \section*{APPENDIX}
-\subsection{Code for Equations of Motion (flywheel pendulum)}
-
+\section{Code for Equations of Motion (flywheel pendulum)}
 \lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
 \begin{lstlisting}[language=Python,frame=single]  % Start your code-block
 
@@ -1262,382 +1129,31 @@ print('t2ddot= {}\n'.format(t2ddot));
 
 \end{lstlisting}
 
-\subsection{Code for Swingup and Upright Controller}
 
-The constants were determined by hand (in another (separate) program, two
-potentiometers were wired up and used to tune the gains). 
-
-Gain tuning proceeded as per Ben Katz's suggestion:
-\begin{itemize}
-    \item Set $K_p$ to zero. Increase $K_d$ until chattering unreasonable (where the
-tiniest disturbance will cause motor to go forward and reverse rapidly). This
-shows the maximum damping the system can produce.
-\item  Next increase the $K_p$ until too much overshoot occurs.
-\item  Profit.
-\end{itemize}
-
-\begin{lstlisting}[language=c]
-
-// Modify for encoder-less (no motor encoder) new prototype 
-// 16 May 2019
-
-#include <Rotary.h>
-#include <MegaMotoHB.h>
-#include <math.h>
-
-//https://cdn.usdigital.com/assets/datasheets/H5_datasheet.pdf?k=636931248608523021
-
-// --------Lever Encoder--------
-int val;
-volatile int encoder1Pos = 0;
-volatile int encoder2Pos = 0;
-Rotary rMotor = Rotary(2, 3); // motor (theta2)
-Rotary rStick = Rotary(A5, A4);  // stick (theta1)
-int n = LOW;
-/*const byte CPin = 0;  // analog input channel*/
-/*int CRaw;      // raw A/D value*/
-/*float CVal;    // adjusted Amps value*/
-
-// --------Motor--------
-int EnablePin = 8;
-int duty;
-int PWMPin = 11;  // Timer2
-int PWMPin2 = 10;
-MegaMotoHB motor(11, 10, 8);
-int motor_output = 0; // command to motor
-
-// --------P-Controller--------
-double thetadot_deadband = 0.2;
-double theta_deadband = 5;
-
-int sample_time = 5; // 15 msec
-
-double theta1 = 0.0; // get_from_encoder()
-double theta2 = 0.0; // get_from_encoder()
-double prev_theta1 = 0.0; // get_from_encoder()
-double prev_theta2 = 0.0; // get_from_encoder()
-
-double theta1dot = 0.0; // get_from_encoder()
-double delta_theta1 = 0.0; // get_from_encoder()
-double theta2dot = 0.0; // get_from_encoder()
-double delta_theta2 = 0.0; // get_from_encoder()
-
-double theta1_desired = 0.0;
-double theta1dot_desired = 0.0;
-
-double err_theta = 0.0;
-double err_thetadot = 0.0;
-
-int delta_motor = 0;
-int prev_motor = 0;
-
-bool theta_CW;
-bool motor_CW;
-
-unsigned long now = 0;
-unsigned long time_elapsed;
-unsigned long prev_time = 0;
-
-double state[4];
-
-double k = 4; // theta constant 
-double kdot = -80; // thetadot 
-
-void setup() {
-    Serial.begin(230400);
-    /*Serial.begin(9600); // for use with plotter tool */
-
-    rMotor.begin();
-    rStick.begin();
-    PCICR |= (1 << PCIE2);
-    PCMSK2 |= (1 << PCINT18) | (1 << PCINT19);
-    PCICR |= (1 << PCIE1);
-    PCMSK1 |= (1 << PCINT13) | (1 << PCINT12);
-    sei();
-
-    /*motorOn();*/
-    motor.Enable();
-    motor.SetStepDelay(1);
-    /*setPwmFrequency(PWMPin, 8);  // change Timer2 divisor to 8 gives 3.9kHz PWM freq*/
-}
-
-void loop(){
-    // -------- update time --------
-    now = millis();
-    time_elapsed = (now - prev_time);
-    if (time_elapsed >= sample_time)
-    {
-
-    // -------- update theta --------
-    // issue: prev_theta is the same as theta
-    
-    theta2 = getCurrentTheta2();
-    theta1 = getCurrentTheta1();
-    delta_theta2 = theta2 - prev_theta2;
-    delta_theta1 = theta1 - prev_theta1;
-    theta1dot = delta_theta1 / time_elapsed;
-    theta2dot = delta_theta2 / time_elapsed;
-    prev_theta2 = theta2;
-    prev_theta1 = theta1;
-    state[0] = theta1;
-    state[1] = theta2;
-    state[2] = theta1dot;
-    state[3] = theta2dot;
-
-    // -------- determine motor input --------
-    /*Serial.println(motor_speed);*/
-
-    err_theta = theta1 - theta1_desired; 
-    err_thetadot = theta1dot - theta1dot_desired;
-    motor_output = - ceil( k * (theta1 - theta1_desired) - kdot * (theta1dot - theta1dot_desired));
-    delta_motor = motor_output - prev_motor;
-    prev_motor = motor_output;
-    //    Serial.print(motor_output);
-    /*aprintf("\ntheta1 %f, t2 %f, t1dot %f, t2dot %f, out %d, deltath %f, cw ", */
-    /*theta1, theta2, theta1dot, theta2dot, motor_output, delta_theta1);*/
-    /*aprintf("\n %d %f %d %f %f ", delta_motor, theta1, motor_output, err_theta, err_thetadot);*/
-    /*aprintf("\n %f %f %f %f ", theta1, err_theta, theta1dot, err_thetadot);*/
-    /*aprintf("\n %f %f ", theta1dot, err_thetadot);*/
-    aprintf("\n t1 %f errtheta %f, errdot %f, motor out %d, t1dot %f", theta1, err_theta, err_thetadot, motor_output, theta1dot);
-    /*Serial.println(theta1);*/
-    /*Serial.print(delta_motor);*/
-
-    /*// -------- write appropriate motor input --------*/
-    motor_output  = abs(constrain(motor_output, -150, 150));
-    motor_output = 200;
-    if (theta1 > 8) {
-        if (theta1dot > 0.01) {
-            motor.Rev(motor_output);
-            /*motorCCW(abs(motor_output));*/
-        }
-        else if (theta1dot < 0.01) {
-            motor.Fwd(-motor_output);
-            /*motorCW(abs(motor_output));*/
-        }
-    }
-    else if (theta1 < -8) {
-        if (theta1dot > 0.01) {
-            motor.Rev(motor_output);
-            /*motorCCW(abs(motor_output));*/
-        }
-        else if (theta1dot < -0.01) {
-            motor.Fwd(-motor_output);
-            /*motorCW(abs(motor_output));*/
-        }
-        else {
-            // do nothing
-        }
-    }
-    else {
-        // theta angle small; do nothing or use
-        //motor.Stop();
-        motorWrite(1);
-    }
-
-    // SANITY CHECK
-    /*
-    motor.Rev(200);
-    delay(500);
-    motor.Fwd(200);
-    delay(500);
-    motor.Stop();
-    delay(500);
-    */
-
-    prev_time = now;
-    }
-}
-
-// --------- Helper Functions -------
-
-// -------- Motor Funcs --------
-
-
-// Implement bang bang control on theta2 dot dot 
-// -- This is PID loop to control actual motor speed to desired speed 
-void motorWrite(int someValue) {
-
-    if (someValue > 0) {
-        if (theta2dot > 0 ) motor.Rev(someValue); //motor.Stop();
-        else motor.Rev(someValue);
-    }
-    else if (someValue < 0) { // < 0
-        someValue = abs(someValue);
-        if (theta2dot > 0 ) motor.Fwd(someValue);
-        else motor.Fwd(someValue);
-    }
-    else {
-        //do nothing
-    }
-}
-    
-// -------- Angle Conversion --------
-double getCurrentTheta1() { // calibration for stick encoder = 1250
-    double val = (double(encoder1Pos) / 1250) * 360;
-    val = fmod(val, 360);
-    if (val > 180) {
-        val = val - 360;
-    }
-    return val;
-}
-
-double getCurrentTheta2() {  // 500 ticks / rev, for motor encoder
-    double val = (double(encoder2Pos) / 500 ) * 360;
-    val = fmod(val, 360);
-    if (val > 180) {
-        val = val - 360;
-    }
-    return val;
-}
-
-
-// ---- Set interrupt to read encoder ----
-
-
-// -------- Read encoders --------
-
-ISR(PCINT2_vect) { // motor, on D2 and D3
-    unsigned char result = rMotor.process();
-    if (result == DIR_NONE) {
-    }
-
-    else if (result == DIR_CW) {
-        encoder2Pos--;
-    }
-    else if (result == DIR_CCW) {
-        encoder2Pos++;
-    }
-}
-
-ISR(PCINT1_vect) { // stick, on A5 and A4
-    unsigned char result = rStick.process();
-    if (result == DIR_NONE) {
-    }
-
-    else if (result == DIR_CW) {
-        encoder1Pos--;
-        //        Serial.println(getCurrentTheta());
-    }
-    else if (result == DIR_CCW) {
-        encoder1Pos++;
-    }
-}
-
-
-
-//---- print help ---------
-int aprintf(char *str, ...) {
-  int i, j, count = 0;
-
-  va_list argv;
-  va_start(argv, str);
-  for(i = 0, j = 0; str[i] != '\0'; i++) {
-    if (str[i] == '%') {
-      count++;
-
-      Serial.write(reinterpret_cast<const uint8_t*>(str+j), i-j);
-
-      switch (str[++i]) {
-        case 'd': Serial.print(va_arg(argv, int)); // int  
-          break;
-        case 'l': Serial.print(va_arg(argv, long)); // long 
-          break;
-        case 'f': Serial.print(va_arg(argv, double)); // float
-          break;
-        case 'c': Serial.print((char) va_arg(argv, int)); // char
-          break;
-        case 's': Serial.print(va_arg(argv, char *)); // string
-          break;
-        case '%': Serial.print("%");
-          break;
-        default:;
-      };
-
-      j = i+1;
-    }
-  };
-  va_end(argv);
-
-  if(i > j) {
-    Serial.write(reinterpret_cast<const uint8_t*>(str+j), i-j);
-  }
-
-  return count;
-}
-
-
-void setPwmFrequency(int pin, int divisor) {
-  byte mode = 0;
-  if(pin == 5 || pin == 6 || pin == 9 || pin == 10) {
-    switch(divisor) {
-      case 1: mode = 0x01; break;
-      case 8: mode = 0x02; break;
-      case 64: mode = 0x03; break;
-      case 256: mode = 0x04; break;
-      case 1024: mode = 0x05; break;
-      default: return;
-    }
-    if(pin == 5 || pin == 6) {
-      TCCR0B = TCCR0B & 0b11111000 | mode;
-    } else {
-      TCCR1B = TCCR1B & 0b11111000 | mode;
-    }
-  } else if(pin == 3 || pin == 11) {
-    switch(divisor) {
-      case 1: mode = 0x01; break;
-      case 8: mode = 0x02; break;
-      case 32: mode = 0x03; break;
-      case 64: mode = 0x04; break;
-      case 128: mode = 0x05; break;
-      case 256: mode = 0x06; break;
-      case 1024: mode = 0x07; break;
-      default: return;
-    }
-    TCCR2B = TCCR2B & 0b11111000 | mode;
-  }
-}
-
-\end{lstlisting}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    %\section{Bill of Materials}
-
-    %A list of the components of the sensor is found in \ref{tbl:bom}. %\begin{tabular}{@{}p{0.3\linewidth}p{0.48\linewidth}p{0.12\linewidth}@{}}
-    %%${@{}lll@{}}
-    %\begin{table}[h]
-        %\caption{List of components and approximate costs}
-        %\label{tbl:bom}
-        %\begin{center}
-            %\resizebox{0.43\textwidth}{!}{%
-                %\begin{tabular}{lll}
-                    %\toprule
-                    %Part          & Details   & Cost  \\ \midrule
-                    %Camera        & Mini Camera module, AmazonSIN: B07CHVYTGD& \$20          \\
-                    %LED           & Golden DRAGON Plus White, 6000K. 124 lumens& \$2           \\
-                    %4 springs     & Assorted small springs set                        & \$5           \\
-                    %3D printed pieces               & PLA filament     & \$5           \\
-                    %Heat-set Threaded Inserts       & Package of 50 from McMaster-Carr (use 2)          & \$1           \\
-                    %Misc. Bolts   & Hex socket head      & \$1           \\
-                    %Epoxy         & 5 minute             & \$5           \\
-                    %\textit{3.3 V source (Arduino)} & \textit{Optional}          & \textit{\$15} \\ \bottomrule
-                %\end{tabular}%
-            %}
-        %\end{center}
-    %\end{table}
+    \section{Bill of Materials}
+
+    A list of the components of the sensor is found in \ref{tbl:bom}. %\begin{tabular}{@{}p{0.3\linewidth}p{0.48\linewidth}p{0.12\linewidth}@{}}
+    %${@{}lll@{}}
+    \begin{table}[h]
+        \caption{List of components and approximate costs}
+        \label{tbl:bom}
+        \begin{center}
+            \resizebox{0.43\textwidth}{!}{%
+                \begin{tabular}{lll}
+                    \toprule
+                    Part          & Details   & Cost  \\ \midrule
+                    Camera        & Mini Camera module, AmazonSIN: B07CHVYTGD& \$20          \\
+                    LED           & Golden DRAGON Plus White, 6000K. 124 lumens& \$2           \\
+                    4 springs     & Assorted small springs set                        & \$5           \\
+                    3D printed pieces               & PLA filament     & \$5           \\
+                    Heat-set Threaded Inserts       & Package of 50 from McMaster-Carr (use 2)          & \$1           \\
+                    Misc. Bolts   & Hex socket head      & \$1           \\
+                    Epoxy         & 5 minute             & \$5           \\
+                    \textit{3.3 V source (Arduino)} & \textit{Optional}          & \textit{\$15} \\ \bottomrule
+                \end{tabular}%
+            }
+        \end{center}
+    \end{table}
 
 
 
