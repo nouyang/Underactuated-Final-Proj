@@ -131,7 +131,7 @@
   escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
   extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
   firstnumber=1000,                % start line enumeration with line 1000
-  frame=single,	                   % adds a frame around the code
+  frame=single,                    % adds a frame around the code
   keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
   keywordstyle=\color{blue},       % keyword style
   language=Octave,                 % the language of the code
@@ -145,7 +145,7 @@
   showtabs=false,                  % show tabs within strings adding particular underscores
   stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
   stringstyle=\color{mymauve},     % string literal style
-  tabsize=2,	                   % sets default tabsize to 2 spaces
+  tabsize=2,                     % sets default tabsize to 2 spaces
   title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
 }
 \usepackage{hyperref}
@@ -431,6 +431,7 @@ Email: nouyang@g.harvard.edu}
 
 \section{Introduction}
 % no \IEEEPARstart
+<<<<<<< HEAD
 The inverted pendulum problem has been widely explored in robotics and control
 theory. In this project, we control a single-link pendulum using a
 torque-controlled inertial wheel. We tackle the problems of stabilizing at the
@@ -518,6 +519,28 @@ relied on PD control. The reasons for this are as follows: \begin{itemize} \item
     not command torque directly (the motor interface only takes angular velocity
     as input), and needed to write an inner PID loop  (TODO: Nao. I can fill
     this in) \end{itemize}
+
+
+%\subsection{Todo}
+%Control authority analysis -- max torque output as function of motor and flywheel (torque constraints)
+%Compare to mglsin theta -- what is the maximum deviation angle we can recover from
+\section{Hardware Methods}
+To constrain our reaction wheel inverted pendulum, we constructed a wooden jig that holds a spinning shaft in place with two ball bearings. The shaft (functioning as the base of the pendulum) is fixed to the plastic lever at the end of which the flywheel and motor are mounted. An encoder is press-fit into the shaft at the base of the pendulum, which gives us our $\theta_1$ value. To further minimize the escaping of the system's energy through means other than rotation, the system is clamped down. We used an Arduino Uno for electronics and code.\\ \indent
+As with any hardware project, it took multiple iterations to arrive at a sufficiently-controllable prototype. The first iteration used a printer motor, and a solid aluminum flywheel with about 4 inches in diameter.  After experimenting with trying to control the pendulum with this setup, it became apparent that the flywheel needed more inertia. \\ \indent
+After adding more weight and a slight increase in diameter to the flywheel, we experimented further. A higher swingup was able to be commanded by this improvement, but we needed a motor with more torque, because the motor required an unnecessarily long ramp down in speed before switching directions.\\ \indent 
+Our third and final iteration featured a flywheel with a much larger diameter and weight distributed more on the perimeter, and a large upgrade to a drill motor with significantly more torque (available from harbor freight). These vast increases in both torque and inertia finally allowed the system to command the acceleration necessary for a full swingup.
+
+\subsection{Theory to Reality}
+
+Later in the paper, we will explain the LQR theory. In reality, however, we relied on PD
+control. The reasons for this are as follows:
+\begin{itemize}
+    \item Limited torque output. Even though our final motor brought a significant increase in torque, it was still far from the ideal (part of this was due to the flywheel's relatively large mass). For full controllability, we'd want a motor with enough torque to be able to handle rapid direction switching at high angular velocities.
+    \item Lack of motor encoder. Though our first motor had an attached encoder, it did not have nearly enough torque, so we had to upgrade. Unfortunately, the newer drill motor did not have an attached encoder, so we lost the ability to track $\theta_2$. $\dot{\theta}$, and $\ddot{\theta}_2$ accurately. Naturally, losing those state variables resulted in a decrease in controllability. 
+    \item Lack of current control. The software controller we wrote outputs torque, but
+    we do not command torque directly (the motor interface only takes angular velocity as input), and needed to write an inner PID loop  (TODO: Nao. I
+    can fill this in)
+\end{itemize}
 
 
 \textbf{To calculate the state variables}, 
