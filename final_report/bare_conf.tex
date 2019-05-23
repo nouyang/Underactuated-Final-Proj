@@ -131,7 +131,7 @@
   escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
   extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
   firstnumber=1000,                % start line enumeration with line 1000
-  frame=single,	                   % adds a frame around the code
+  frame=single,                    % adds a frame around the code
   keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
   keywordstyle=\color{blue},       % keyword style
   language=Octave,                 % the language of the code
@@ -145,7 +145,7 @@
   showtabs=false,                  % show tabs within strings adding particular underscores
   stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
   stringstyle=\color{mymauve},     % string literal style
-  tabsize=2,	                   % sets default tabsize to 2 spaces
+  tabsize=2,                     % sets default tabsize to 2 spaces
   title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
 }
 \usepackage{hyperref}
@@ -402,7 +402,7 @@ Email: nouyang@g.harvard.edu}
 
 % make the title area
 \maketitle
-
+\noindent May 22, 2019\\ \\
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
 \begin{abstract}
@@ -428,38 +428,36 @@ We explore the classic nonlinear controls problem, inverting a pendulum, using a
 
 \section{Introduction}
 % no \IEEEPARstart
-Pendulum is inherently unstable around upright fixed point.
+The inverted pendulum problem is one that has been widely explored in robotics and control theory. In this project, we control a single-link pendulum using a torque-controlled inertial wheel. We tackle the problems of stabilizing at the bottom (0 deg) and swinging up to stabilize at the top (180 deg). \\ \indent
+While many have worked on the theory of the reaction-wheel inverted pendulum problem, we turn to a couple of actual hardware implementations of similar problems that are documented online. In 2016, Ben Katz posted a blog about the process of building a Furuta Pendulum from scratch. This featured an inverted pendulum, but instead of controlling the $x$ coordinate of the base of the pendulum, the control is in the form of another rotational axis on which the pendulum is attached orthogonally. Thus, by rotating the system rapidly in the $x, y$ plane, stability in the $z$ plane can be achieved.\\ \indent
+In 2013, Spanlang, Mayr, and Gattringer of the Institute of Robotics at Johannes Kepler University Linz (Austria) built a reaction-wheel inverted pendulum contained within a 18x18x18 cm cube, using the floor as the base of the pendulum. \\ \indent
+Finally, in 2012, Shane Colton build the Seg Stick at MITERS (the machine shope we build our project in). The Seg Stick is a self-balancing broomstick powered by two drill-driven wheels at the base of the stick. It has the functionality of the cart-pole system, but less constrained, and with the ability to move the system while balancing. In section IV, we further discuss the possibilities of adding a similar feature to our reaction-wheel inverted pendulum system.
 
 
 %Example write-up:
 % http://web.mit.edu/sjlevine/www/project_data/bicycle-planning/sjlevine_final_report.pdf
 % ttps://en.wikipedia.org/wiki/Nonlinear_system
 
-\hfill mds
 
-\hfill May 22, 2019
 
 %\subsection{Todo}
 %Control authority analysis -- max torque output as function of motor and flywheel (torque constraints)
 %Compare to mglsin theta -- what is the maximum deviation angle we can recover from
-
 \section{Hardware Methods}
-
-First, motor with encoder, and small flywheel.
-Insert picture of the three iterations.
-
-(Final motor was a drill motor, available for ~\$25 at harbor freight)
+To constrain our reaction wheel inverted pendulum, we constructed a wooden jig that holds a spinning shaft in place with two ball bearings. The shaft (functioning as the base of the pendulum) is fixed to the plastic lever at the end of which the flywheel and motor are mounted. An encoder is press-fit into the shaft at the base of the pendulum, which gives us our $\theta_1$ value. To further minimize the escaping of the system's energy through means other than rotation, the system is clamped down. We used an Arduino Uno for electronics and code.\\ \indent
+As with any hardware project, it took multiple iterations to arrive at a sufficiently-controllable prototype. The first iteration used a printer motor, and a solid aluminum flywheel with about 4 inches in diameter.  After experimenting with trying to control the pendulum with this setup, it became apparent that the flywheel needed more inertia. \\ \indent
+After adding more weight and a slight increase in diameter to the flywheel, we experimented further. A higher swingup was able to be commanded by this improvement, but we needed a motor with more torque, because the motor required an unnecessarily long ramp down in speed before switching directions.\\ \indent 
+Our third and final iteration featured a flywheel with a much larger diameter and weight distributed more on the perimeter, and a large upgrade to a drill motor with significantly more torque (available from harbor freight). These vast increases in both torque and inertia finally allowed the system to command the acceleration necessary for a full swingup.
 
 \subsection{Theory to Reality}
 
-Below, we will explain the LQR theory. However, in reality we relied on PD
-control. The reasons for this are:
-
+Later in the paper, we will explain the LQR theory. In reality, however, we relied on PD
+control. The reasons for this are as follows:
 \begin{itemize}
-    \item Limited torque output
-    \item Lack of motor encoder
-    \item Lack of current control -- our software controller outputs torque, but
-    we do not command torque directly, and needed to write an inner PID loop  (I
+    \item Limited torque output. Even though our final motor brought a significant increase in torque, it was still far from the ideal (part of this was due to the flywheel's relatively large mass). For full controllability, we'd want a motor with enough torque to be able to handle rapid direction switching at high angular velocities.
+    \item Lack of motor encoder. Though our first motor had an attached encoder, it did not have nearly enough torque, so we had to upgrade. Unfortunately, the newer drill motor did not have an attached encoder, so we lost the ability to track $\theta_2$. $\dot{\theta}$, and $\ddot{\theta}_2$ accurately. Naturally, losing those state variables resulted in a decrease in controllability. 
+    \item Lack of current control. The software controller we wrote outputs torque, but
+    we do not command torque directly (the motor interface only takes angular velocity as input), and needed to write an inner PID loop  (TODO: Nao. I
     can fill this in)
 \end{itemize}
 
@@ -475,17 +473,32 @@ thetadot.
 (Non constant time frame)
 
 \subsection{Swingup with Bang-Bang Control}
-
+To get an initial working implementation to swing the pendulum up to 180 degrees, we used a simple bang-bang controller. The protocol is as follows. When $\theta_1 > 0$ and $\dot{\theta}_1$, run the motor at full speed clockwise to maximize the amplitude reached. When the apex of that period is reached (i.e. $\dot{\theta}_1 = 0$), run the motor at full speed in the opposite direction. Essentially, run the motor at full speed in whatever direction is consistent with the pendulum's direction of travel, w.r.t. the overall system. If the pendulum is moving clockwise, spin clockwise. If the pendulum is moving counterclockwise, spin counterclockwise. Using this bang-bang controller, we were able to achieve full swingup.\\ \indent
+To make the swingup more efficient, we implemented a more complex controller, utilizing energy shaping (covered in section III F).
 \subsection{Inversion with PD Control}
-
-We used a simple control with two k values: one for theta, and one for thetadot.
-This is equivalent to a PD controller.
+For downward convergence, we used a simple Proportional-Derivative (PD) controller with two k values: one for $\theta_1$, and one for $\dot{\theta_1}$. Our feedback for motor output was formulated by: $$\textrm{motor output = } - ceil(k(\theta_1-\theta_{1d})-k_d (\dot{\theta}_1-\theta_{1dotd}))$$ where $k$ and $k_d$ represent the proportional and derivative constants, respectively, $\theta_{1d}$ represents the desired $\theta_1$ value (0.0), and $\theta_{1dotd}$ the desired $\dot{\theta}_1$ value (0.0). To choose our $k$ constants, we used added a potentiometer to our arduino setup, for easy, on-the-go tuning. 
 
 \subsection{Results}
-
-Insert a table here! Our excellent results.
-
-And link to the videos.
+To quantify the efficacy of our controller, we timed multiple different tasks for both our first iteration (with the smaller flywheel and weaker motor), and our final iteration (with the larger flywheel and stronger motor). The tasks we timed were natural downward convergence (how long the pendulum takes to converge at 0 deg when started at 90 deg, without any control input), controlled downward convergence (how long the pendulum takes to converge at 0 deg when started at 90 deg, with control input), and controlled swingup (how long it takes for the pendulum to swing up to 180 deg). These findings are displayed in Table I.
+\begin{table}[h]
+\caption{}
+\scalebox{.8}{%
+\begin{tabular}{c|c|c|c|}
+\cline{2-4}
+                                                                                                                  & \begin{tabular}[c]{@{}c@{}}Natural \\ Downward\\  Convergence \\ (starting at 90 deg)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Controlled \\ Downward \\ Convergence \\ (starting at 90 deg)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Controlled \\ Swingup \\ (starting at 0 deg)\end{tabular} \\ \hline
+\multicolumn{1}{|c|}{\begin{tabular}[c]{@{}c@{}}First Flywheel \\ (smaller) \\ and Weaker \\ Motor\end{tabular}}  & 45 secs                                                                                            & 11 secs                                                                                               & 23 secs                                                                              \\ \hline
+\multicolumn{1}{|c|}{\begin{tabular}[c]{@{}c@{}}Final Flywheel \\ (larger) \\ and Stronger \\ Motor\end{tabular}} & 46 secs                                                                                            & 3 secs                                                                                                & 3 sec                                                                                \\ \hline
+\end{tabular}}
+\end{table}
+Video clips of these on the system can be found here:
+\begin{itemize}
+    \item Final Flywheel natural from90: https://bit.ly/2JXV39B
+    \item Final Flywheel controlled from90: https://bit.ly/2WipsWJ
+    \item First Flywheel (partial) Swingup: https://bit.ly/2X7tI8R
+    \item Second Flywheel (full) Swingup: https://bit.ly/2WlHmrA
+    \item Final Flywheel (full) Swingup: https://bit.ly/2VE6Qfn
+    
+\end{itemize}
 
 
 \section{Simulation Analysis}
